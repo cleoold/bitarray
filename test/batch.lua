@@ -28,3 +28,8 @@ local f = Bitarray.new(32)
     f[32] = true
     for i = 1, #f-1 do check(f[i] == false) end
     check(f[32] == true)
+    -- chain sets
+    f:set(1, true):set(2, false):set(3, true)
+    check(f[1] and not f[2] and f[3])
+
+print('all tests passed!')

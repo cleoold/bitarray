@@ -26,10 +26,10 @@
 #define checkbitarray(L) (Bitarray *)luaL_checkudata(L, 1, BITARRAY_MT_1)
 
 /**
- * Creates a new bit array of n bits
+ * Creates a new bit array of n bits. all fields are initialized to 0.
  * @function new
  * @tparam integer nbits number of bits of the array
- * @treturn Bitarray the newly created bitarray
+ * @treturn Bitarray|nil the newly created bitarray if successful
  */
 _BITARRAY_API static int new(lua_State *L)
 {
@@ -61,11 +61,12 @@ static Bitarray *checkbitarray_and_index(lua_State *L, size_t *i)
 
 /**
  * Set the ith bit of the array. Any value other than false or nil will be
- * considered a false(0) bit. <br />
+ * considered a truthy(1) bit. <br />
  * Operator __newindex is overloaded with this method.
  * @function set
  * @tparam integer i the index
  * @tparam any b the value to change to
+ * @treturn Bitarray the original bit array reference
  * @usage
  * local a = Bitarray.new(10)
  * a:set(4, true)
@@ -78,7 +79,8 @@ _BITARRAY_API static int setbit(lua_State *L)
     luaL_checkany(L, 3);
 
     bitarray_set_bit(ba, i, lua_toboolean(L, 3));
-    return 0;
+    lua_pop(L, 2);
+    return 1;
 }
 
 /**
@@ -86,7 +88,7 @@ _BITARRAY_API static int setbit(lua_State *L)
  * Operator __index is overloaded with this method.
  * @function at
  * @tparam integer i the index
- * @treturn boolean
+ * @treturn boolean true if bit is 1, false if 0
  * @usage
  * local a = Bitarray.new(10)
  * a:at(7) -- false
