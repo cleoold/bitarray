@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        luaVersion: ["5.1.5", "5.2.4", "5.3.5"]
+        luaVersion: ["5.3.5"]
 
     steps:
     - uses: actions/checkout@master
@@ -24,6 +24,10 @@ jobs:
     - uses: leafo/gh-actions-lua@v5
       with:
         luaVersion: ${{ matrix.luaVersion }}
+        
+    - name: getfiles
+      run: |
+        sudo apt install liblua5.3-dev
 
     - name: build
       run: |
