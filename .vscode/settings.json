@@ -1,0 +1,4 @@
+{
+    "C_Cpp.default.cStandard": "c99",
+    "C_Cpp.default.includePath": ["C_Cpp.default.includePath", "/usr/include/lua5.1"]
+}
