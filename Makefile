@@ -38,6 +38,9 @@ OBJ = $(OUTPUT_DIR)/bitarray.o
 
 all : $(OUTPUT_DIR) $(CORE)
 
+doc : $(SRC)
+	ldoc ext/bitarray.c --project 'Bitarray' --title 'Lua Bitarray Reference'
+
 $(OUTPUT_DIR) :
 	mkdir -p $@
 

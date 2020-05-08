@@ -1,0 +1,252 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Lua Bitarray Reference</title>
+    <link rel="stylesheet" href="ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>Bitarray</h1>
+
+
+<h2>Contents</h2>
+<ul>
+<li><a href="#Functions">Functions</a></li>
+<li><a href="#Fields">Fields</a></li>
+<li><a href="#Class_Bitarray">Class Bitarray </a></li>
+</ul>
+
+
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>bitarray</strong></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+<h1>Module <code>bitarray</code></h1>
+<p>The data structure Bitarray stores bits (booleans) in an array in a
+ memory-saving manner internally.</p>
+<p> One can assign value (0 or 1) to
+ each element as well as extract values from the array. <br/>
+ Github: <a href="https://github.com/cleoold/bitarray">repo</a></p>
+
+
+<h2><a href="#Functions">Functions</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#new">new (nbits)</a></td>
+	<td class="summary">Creates a new bit array of n bits</td>
+	</tr>
+</table>
+<h2><a href="#Fields">Fields</a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#__version">__version</a></td>
+	<td class="summary">Describes the loaded bitarray library info (version and lua version)</td>
+	</tr>
+</table>
+<h2><a href="#Class_Bitarray">Class Bitarray </a></h2>
+<table class="function_list">
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:set">Bitarray:set (i, b)</a></td>
+	<td class="summary">Set the ith bit of the array.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:at">Bitarray:at (i)</a></td>
+	<td class="summary">Get the ith bit of the array.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:len">Bitarray:len ()</a></td>
+	<td class="summary">Get the length of the array.</td>
+	</tr>
+</table>
+
+<br/>
+<br/>
+
+
+    <h2><a name="Functions"></a>Functions</h2>
+    <dl class="function">
+    <dt>
+    <a name = "new"></a>
+    <strong>new (nbits)</strong>
+    </dt>
+    <dd>
+    Creates a new bit array of n bits
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">nbits</span>
+            <span class="types"><span class="type">integer</span></span>
+         number of bits of the array
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a></span>
+        the newly created bitarray
+    </ol>
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Fields"></a>Fields</h2>
+    <dl class="function">
+    <dt>
+    <a name = "__version"></a>
+    <strong>__version</strong>
+    </dt>
+    <dd>
+    Describes the loaded bitarray library info (version and lua version)
+
+
+    <ul>
+        <li><span class="parameter">__version</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+        </li>
+    </ul>
+
+
+
+
+
+</dd>
+</dl>
+    <h2><a name="Class_Bitarray"></a>Class Bitarray </h2>
+
+    <dl class="function">
+    <dt>
+    <a name = "Bitarray:set"></a>
+    <strong>Bitarray:set (i, b)</strong>
+    </dt>
+    <dd>
+    Set the ith bit of the array.  Any value other than false or nil will be
+ considered a false(0) bit. <br />
+ Operator __newindex is overloaded with this method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+         the index
+        </li>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">any</span></span>
+         the value to change to
+        </li>
+    </ul>
+
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>)
+ a:set(<span class="number">4</span>, <span class="keyword">true</span>)
+ a[<span class="number">4</span>] = <span class="keyword">true</span> -- same</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:at"></a>
+    <strong>Bitarray:at (i)</strong>
+    </dt>
+    <dd>
+    Get the ith bit of the array.  <br />
+ Operator __index is overloaded with this method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+         the index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>)
+ a:at(<span class="number">7</span>) <span class="comment">-- false
+</span> a[<span class="number">7</span>]    -- <span class="keyword">false</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:len"></a>
+    <strong>Bitarray:len ()</strong>
+    </dt>
+    <dd>
+    Get the length of the array.  <br />
+ Operator __len is overloaded with this method.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">integer</span></span>
+        the number of bits of the array
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>)
+ a:len(a) <span class="comment">-- 10
+</span> #a       -- <span class="number">10</span></pre>
+    </ul>
+
+</dd>
+</dl>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.2</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>

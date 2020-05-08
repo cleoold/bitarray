@@ -4,6 +4,18 @@
 #include "bitarray_impl.h"
 
 
+/**
+ * The data structure Bitarray stores bits (booleans) in an array in a
+ * memory-saving manner internally. One can assign value (0 or 1) to
+ * each element as well as extract values from the array. <br/>
+ * Github: <a href="https://github.com/cleoold/bitarray">repo</a>
+ * @module bitarray
+ */
+
+/**
+ * Describes the loaded bitarray library info (version and lua version)
+ * @string __version
+ */
 #define BITARRAY_INFO "bitarray 1.1 for " LUA_VERSION
 
 #define _BITARRAY_API
@@ -13,6 +25,12 @@
 /* checks whether the first argument is bitarray */
 #define checkbitarray(L) (Bitarray *)luaL_checkudata(L, 1, BITARRAY_MT_1)
 
+/**
+ * Creates a new bit array of n bits
+ * @function new
+ * @tparam integer nbits number of bits of the array
+ * @treturn Bitarray the newly created bitarray
+ */
 _BITARRAY_API static int new(lua_State *L)
 {
     size_t nbits = (size_t)luaL_checkinteger(L, 1);
@@ -28,6 +46,10 @@ _BITARRAY_API static int new(lua_State *L)
     return 1;
 }
 
+/**
+ * @type Bitarray
+ */
+
 static Bitarray *checkbitarray_and_index(lua_State *L, size_t *i)
 {
     Bitarray *ba = checkbitarray(L);
@@ -37,6 +59,18 @@ static Bitarray *checkbitarray_and_index(lua_State *L, size_t *i)
     return ba;
 }
 
+/**
+ * Set the ith bit of the array. Any value other than false or nil will be
+ * considered a false(0) bit. <br />
+ * Operator __newindex is overloaded with this method.
+ * @function set
+ * @tparam integer i the index
+ * @tparam any b the value to change to
+ * @usage
+ * local a = Bitarray.new(10)
+ * a:set(4, true)
+ * a[4] = true -- same
+ */
 _BITARRAY_API static int setbit(lua_State *L)
 {
     size_t i;
@@ -47,6 +81,17 @@ _BITARRAY_API static int setbit(lua_State *L)
     return 0;
 }
 
+/**
+ * Get the ith bit of the array. <br />
+ * Operator __index is overloaded with this method.
+ * @function at
+ * @tparam integer i the index
+ * @treturn boolean
+ * @usage
+ * local a = Bitarray.new(10)
+ * a:at(7) -- false
+ * a[7]    -- false
+ */
 _BITARRAY_API static int getbit(lua_State *L)
 {
     size_t i;
@@ -56,12 +101,23 @@ _BITARRAY_API static int getbit(lua_State *L)
     return 1;
 }
 
+/**
+ * Get the length of the array. <br />
+ * Operator __len is overloaded with this method.
+ * @function len
+ * @treturn integer the number of bits of the array
+ * @usage
+ * local a = Bitarray.new(10)
+ * a:len(a) -- 10
+ * #a       -- 10
+ */
 _BITARRAY_API static int len(lua_State *L) {
     Bitarray *ba = checkbitarray(L);
     lua_pushinteger(L, ba->size);
     return 1;
 }
 
+/* finalizer for bitarray */
 _BITARRAY_API static int gc(lua_State *L)
 {
     Bitarray *ba = (Bitarray *)luaL_checkudata(L, 1, BITARRAY_MT_1);
@@ -69,6 +125,8 @@ _BITARRAY_API static int gc(lua_State *L)
     return 0;
 }
 
+/* actual __index, if param if number it returns result of get(), otherwise
+   looks up for fields */
 _BITARRAY_API static int get(lua_State *L)
 {
 #if LUA_VERSION_NUM >= 503
