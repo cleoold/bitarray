@@ -4,7 +4,7 @@
 #include "bitarray_impl.h"
 
 
-#define BITARRAY_INFO "bitarray 1.0 for " LUA_VERSION
+#define BITARRAY_INFO "bitarray 1.1 for " LUA_VERSION
 
 #define _BITARRAY_API
 

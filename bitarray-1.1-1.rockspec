@@ -1,8 +1,8 @@
 package = "bitarray"
-version = "1.0-1"
+version = "1.1-1"
 source = {
    url = "git+https://github.com/cleoold/bitarray.git",
-   tag = "master"
+   tag = "1.1"
 }
 description = {
    summary = "Bit array library for lua",
@@ -18,7 +18,6 @@ build = {
    modules = {
       bitarray = {
          sources = "ext/bitarray.c"
-      },
-      ["test.batch"] = "test/batch.lua"
+      }
    }
 }
