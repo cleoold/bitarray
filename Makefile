@@ -26,7 +26,7 @@ endif
 endif
 
 ifndef CFLAGS
-	CFLAGS = -Wall -Wextra -Wno-sign-compare -O2 -g
+	CFLAGS = -Wall -Wextra -Wno-sign-compare -O2 -g -std=c99
 endif
 CFLAGS += $(CCSHARED) $(LUA_CFLAGS)
 LDFLAGS += $(LIBFLAG)

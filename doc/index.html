@@ -58,6 +58,10 @@
 	<td class="name" nowrap><a href="#new">new (nbits)</a></td>
 	<td class="summary">Creates a new bit array of n bits.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#copyfrom">copyfrom (src)</a></td>
+	<td class="summary">Creates a new bit array, identical to src.</td>
+	</tr>
 </table>
 <h2><a href="#Fields">Fields</a></h2>
 <table class="function_list">
@@ -70,15 +74,33 @@
 <table class="function_list">
 	<tr>
 	<td class="name" nowrap><a href="#Bitarray:set">Bitarray:set (i, b)</a></td>
-	<td class="summary">Set the ith bit of the array.</td>
+	<td class="summary"><i>Mutates the array.</i> <br />
+ Set the ith bit of the array.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#Bitarray:at">Bitarray:at (i)</a></td>
-	<td class="summary">Get the ith bit of the array.</td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Get the ith bit of the array.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#Bitarray:len">Bitarray:len ()</a></td>
-	<td class="summary">Get the length of the array.</td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Get the length of the array.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:fill">Bitarray:fill (b)</a></td>
+	<td class="summary"><i>Mutates the array.</i> <br />
+ Set all bits of the array.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:flip">Bitarray:flip ([i])</a></td>
+	<td class="summary"><i>Mutates the array.</i> <br />
+ If argument i is present, the bit at that index is flipped, if not or
+ i is 0, all the bits are flipped.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:resize">Bitarray:resize (n)</a></td>
+	<td class="summary"><i>May mutate the array.</td>
 	</tr>
 </table>
 
@@ -101,6 +123,33 @@
         <li><span class="parameter">nbits</span>
             <span class="types"><span class="type">integer</span></span>
          number of bits of the array
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a> or <span class="type">nil</span></span>
+        the newly created bitarray if successful
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "copyfrom"></a>
+    <strong>copyfrom (src)</strong>
+    </dt>
+    <dd>
+    Creates a new bit array, identical to src.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">src</span>
+            <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a></span>
+
         </li>
     </ul>
 
@@ -147,7 +196,8 @@
     <strong>Bitarray:set (i, b)</strong>
     </dt>
     <dd>
-    Set the ith bit of the array.  Any value other than false or nil will be
+    <i>Mutates the array.</i> <br />
+ Set the ith bit of the array.  Any value other than false or nil will be
  considered a truthy(1) bit. <br />
  Operator __newindex is overloaded with this method.
 
@@ -187,7 +237,8 @@
     <strong>Bitarray:at (i)</strong>
     </dt>
     <dd>
-    Get the ith bit of the array.  <br />
+    <i>Does not mutate the array.</i> <br />
+ Get the ith bit of the array.  <br />
  Operator __index is overloaded with this method.
 
 
@@ -222,7 +273,8 @@
     <strong>Bitarray:len ()</strong>
     </dt>
     <dd>
-    Get the length of the array.  <br />
+    <i>Does not mutate the array.</i> <br />
+ Get the length of the array.  <br />
  Operator __len is overloaded with this method.
 
 
@@ -243,6 +295,107 @@
  a:len(a) <span class="comment">-- 10
 </span> #a       -- <span class="number">10</span></pre>
     </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:fill"></a>
+    <strong>Bitarray:fill (b)</strong>
+    </dt>
+    <dd>
+    <i>Mutates the array.</i> <br />
+ Set all bits of the array.  Any value other than false or nil will be
+ considered a truthy(1) bit. <br />
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">b</span>
+            <span class="types"><span class="type">any</span></span>
+         the value to change to
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a></span>
+        the original bit array reference
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>)
+ a:fill(<span class="keyword">true</span>)  -- all bits set to <span class="number">1</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:flip"></a>
+    <strong>Bitarray:flip ([i])</strong>
+    </dt>
+    <dd>
+    <i>Mutates the array.</i> <br />
+ If argument i is present, the bit at that index is flipped, if not or
+ i is 0, all the bits are flipped.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+         the index
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a></span>
+        the original bit array reference
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>)
+ a:flip()    <span class="comment">-- all bits set to 1
+</span> a:flip(<span class="number">1</span>)   -- sets first bit to <span class="keyword">true</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:resize"></a>
+    <strong>Bitarray:resize (n)</strong>
+    </dt>
+    <dd>
+    <i>May mutate the array.  Does not mutate the existing part. </i> <br />
+ Resize the array to length n. if new size is greater, the new bits
+ are initialized to 0, otherwise additional bits are lost.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">integer</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a> or <span class="type">nil</span></span>
+        the original bit array reference if successful,
+ otherwise nil
+    </ol>
+
+
+
 
 </dd>
 </dl>
