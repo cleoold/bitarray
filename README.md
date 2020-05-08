@@ -31,3 +31,4 @@ Requiring [ldoc](http://stevedonovan.github.io/ldoc/), available by issuing
 ```sh
 make doc
 ```
+It is also available at [here](doc/index.html).
