@@ -7,8 +7,6 @@
 #include <stdlib.h>
 
 
-#define SMAX(a, b) (((a) > (b)) ? (a) : (b))
-
 typedef unsigned int WORD;
 
 /*  number of bits in a word */
@@ -152,8 +150,9 @@ static void bitarray_copyvalues(Bitarray *ba, Bitarray *tg)
 static void bitarray_copyvalues2(Bitarray *ba, Bitarray *tg,
     size_t from, size_t to, size_t start)
 {
-    for(size_t i = start; i < to - from; ++i)
-        bitarray_set_bit(tg, i, bitarray_get_bit(ba, from + i));
+    /* TODO: optimise situation where whole WORD copying is ok */
+    for(size_t i = 0; i < to - from; ++i)
+        bitarray_set_bit(tg, start + i, bitarray_get_bit(ba, from + i));
 }
 
 static int bitarray_equal(Bitarray *l, Bitarray *r)

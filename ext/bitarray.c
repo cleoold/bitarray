@@ -247,6 +247,11 @@ _BITARRAY_API static int reverse(lua_State *L)
  * @tparam[opt] integer i the starting index, default 1
  * @tparam[optchain] integer n the ending index, default the length of the array.
  * @treturn Bitarray|nil the newly created bit array reference if successful
+ * @usage
+ * local a = Bitarray.new(8):set(3, true):set(5, true)
+ * local b = a:slice(1, 4)
+ * print(a) -- Bitarray[0,0,1,0,1,0,0,0]
+ * print(b) -- Bitarray[0,0,1,0]
  */
 _BITARRAY_API static int slice(lua_State *L)
 {
@@ -353,6 +358,69 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
 
 #undef BITARRAY_AT_TYPE
 
+/**
+ * <i>Mutates the array.</i> <br />
+ * Copy the content from src to the operand. The array's ith, i+1th, ... bit
+ * will be the bits from src starting from 1st to the last. The array needs
+ * to be big enough to hold the data.
+ * @function from_bitarray
+ * @tparam Bitarray src
+ * @tparam[opt] integer i the index in this array where the first bit gets
+ * copied from src. default 1
+ * @treturn Bitarray the original bit array reference
+ * @usage
+ * local a = Bitarray.new(10)
+ *  :from_bitarray(Bitarray.new(5):fill(true):set(3, false), 6)
+ * print(a) -- Bitarray[0,0,0,0,0,1,1,0,1,1]
+ */
+_BITARRAY_API static int from_bitarray(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    Bitarray *src = checkbitarray(L, 2);
+    lua_Integer i = luaL_optinteger(L, 3, 1) - 1;
+    luaL_argcheck(L, ba->size - i + 1 > src->size, 3, "not enough space");
+
+    bitarray_copyvalues2(src, ba, 0, src->size, i);
+    lua_pushvalue(L, 1);
+    return 1;
+}
+
+/**
+ * <i>Does not mutate the array.</i> <br />
+ * Returns the string representation for the array. <br />
+ * Metamethod __tostring is overloaded with this method so it can be implicitly
+ * called if string is needed. The full array is not displayed if it is too long.
+ * @function tostring
+ * @treturn string
+ * @usage
+ * local a = Bitarray.new(8):set(8, true)
+ * print(a)
+ * -- Bitarray[0,0,0,0,0,0,0,1]
+ * a:resize(65)
+ * print(a)
+ * -- Bitarray[...]
+ */
+_BITARRAY_API static int tostring(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    luaL_Buffer buf;
+    luaL_buffinit(L, &buf);
+    luaL_addstring(&buf, "Bitarray[");
+    if (ba->size > (size_t)64) {
+        luaL_addstring(&buf, "...]");
+        goto push;
+    }
+    for (size_t i = 0; i < ba->size-1; ++i) {
+        luaL_addstring(&buf, bitarray_get_bit(ba, i) ? "1," : "0,");
+    }
+    /* size cannot be 0 in this context */
+    luaL_addstring(&buf, bitarray_get_bit(ba, ba->size-1) ? "1]" : "0]");
+push:
+    luaL_addvalue(&buf);
+    luaL_pushresult(&buf);
+    return 1;
+}
+
 /* finalizer for bitarray */
 _BITARRAY_API static int gc(lua_State *L)
 {
@@ -399,11 +467,14 @@ static const struct luaL_Reg bitarraylib_m1[] =
     { "at_uint16", at_uint16_t },
     { "at_uint32", at_uint32_t },
     { "at_uint64", at_uint64_t },
+    { "from_bitarray", from_bitarray },
+    { "tostring", tostring },
     { "__index", get },
     { "__newindex", setbit },
     { "__len", len },
     { "__eq", equal },
     { "__gc", gc },
+    { "__tostring", tostring },
     { NULL, NULL }
 };
 

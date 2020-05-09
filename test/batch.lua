@@ -101,7 +101,7 @@ do
         check(a == b)
 end
 
--- slice
+-- slice and from_bitarray
 do
     local a = Bitarray.new(167):fill(true)
         check(a == a:slice() and a == a:slice(1))
@@ -116,6 +116,12 @@ do
         for i = 1, 40 do check(e[i]) end
         check(not e[41])
         for i = 42, 43 do check(e[i]) end
+    local f = Bitarray.new(44):from_bitarray(Bitarray.new(22):fill(true))
+        check(#f == 44)
+        for i = 1, 22 do check(f[i]) end
+        for i = 23, 44 do check(not f[i]) end
+    local g = Bitarray.new(10):from_bitarray(Bitarray.new(5):fill(true):set(3, false), 6)
+        check(g == Bitarray.new(10):set(6, true):set(7, true):set(9, true):set(10, true))
 end
 
 print('all tests passed!')
