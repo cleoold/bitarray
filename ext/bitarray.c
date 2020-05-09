@@ -88,7 +88,7 @@ static Bitarray *checkbitarray_and_optrange(lua_State *L, size_t *from, size_t *
     lua_Integer from_ = luaL_optinteger(L, 2, 1) - 1;
     luaL_argcheck(L, 0 <= from_ && from_ < ba->size, 2, "invalid index");
     lua_Integer to_ = luaL_optinteger(L, 3, ba->size);
-    luaL_argcheck(L, to_ > from_+1 && to_ <= ba->size, 3, "invalid index");
+    luaL_argcheck(L, to_ > from_ && to_ <= ba->size, 3, "invalid index");
     *from = (size_t)from_;
     *to = (size_t)to_;
     return ba;

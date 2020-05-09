@@ -105,6 +105,8 @@ end
 do
     local a = Bitarray.new(167):fill(true)
         check(a == a:slice() and a == a:slice(1))
+    local b = a:slice(7, 7)
+        check(b[1])
     local c = a:slice(1, 128)
         for i = 1, 128 do check(c[i]) end
     local d = a:slice(1, 130)
