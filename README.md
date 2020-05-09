@@ -1,4 +1,4 @@
-# Bitarray
+# [Bitarray](https://cleoold.github.io/bitarray/)
 
 A simple bit array (or bit set, bit string, boolean vector, ... whatever) data structure for Lua written in pure C.
 
@@ -6,7 +6,7 @@ The data structure Bitarray stores bits (booleans) in an array in a memory-savin
 One can assign value (0 or 1) to each element as well as extract values from the array.
 
 ## Install from luarocks
-Will install the release version.
+It will install the release version.
 ```sh
 luarocks install bitarray
 ```
@@ -27,7 +27,7 @@ for i = 1, #a do print(a[i]) end
 -- true false false false false false false false false false
 ```
 
-## Doc
+## [Documentation](doc/index.html)
 Requiring [ldoc](http://stevedonovan.github.io/ldoc/), available by issuing
 ```sh
 make doc

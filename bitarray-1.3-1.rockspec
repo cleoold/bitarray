@@ -1,13 +1,13 @@
 package = "bitarray"
-version = "1.2-1"
+version = "1.3-1"
 source = {
    url = "git+https://github.com/cleoold/bitarray.git",
-   tag = "1.2"
+   tag = "1.3"
 }
 description = {
    summary = "Bit array library for lua",
    detailed = "A simple bit array (or bit set, bit string, boolean vector, ... whatever) data structure for Lua written in pure C.",
-   homepage = "https://github.com/cleoold/bitarray",
+   homepage = "https://cleoold.github.io/bitarray/",
    license = "MIT"
 }
 dependencies = {
@@ -19,5 +19,6 @@ build = {
       bitarray = {
          sources = "ext/bitarray.c"
       }
-   }
+   },
+   copy_directories = { "doc", }
 }
