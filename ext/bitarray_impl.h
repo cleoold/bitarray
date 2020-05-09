@@ -7,6 +7,8 @@
 #include <stdlib.h>
 
 
+#define SMAX(a, b) (((a) > (b)) ? (a) : (b))
+
 typedef unsigned int WORD;
 
 /*  number of bits in a word */
@@ -130,6 +132,15 @@ static int bitarray_resize(Bitarray *ba, size_t nbits)
     return nbits;
 }
 
+static void bitarray_reverse(Bitarray *ba)
+{
+    for (size_t i = 0, j = ba->size-1; i < j; ++i, --j) {
+        int tmp = bitarray_get_bit(ba, i);
+        bitarray_set_bit(ba, i, bitarray_get_bit(ba, j));
+        bitarray_set_bit(ba, j, tmp);
+    }
+}
+
 /* copy values from ba to tg */
 static void bitarray_copyvalues(Bitarray *ba, Bitarray *tg)
 {
@@ -137,3 +148,20 @@ static void bitarray_copyvalues(Bitarray *ba, Bitarray *tg)
         tg->values[i] = ba->values[i];
 }
 
+/* copy values from ba to tg, make tg[start] = ba[from], ...tg[to-from-1] = ba[to-1] */
+static void bitarray_copyvalues2(Bitarray *ba, Bitarray *tg,
+    size_t from, size_t to, size_t start)
+{
+    for(size_t i = start; i < to - from; ++i)
+        bitarray_set_bit(tg, i, bitarray_get_bit(ba, from + i));
+}
+
+static int bitarray_equal(Bitarray *l, Bitarray *r)
+{
+    if (l->size != r->size)
+        return 0;
+    for (size_t i = 0; i < WORDS_FOR_BITS(l->size); ++i)
+        if (l->values[i] != r->values[i])
+            return 0;
+    return 1;
+}

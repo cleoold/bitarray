@@ -22,20 +22,12 @@
 
 #define BITARRAY_MT_1 "cleoold.lua.bitarray_mt1"
 
-/* checks whether the first argument is bitarray */
-#define checkbitarray(L) (Bitarray *)luaL_checkudata(L, 1, BITARRAY_MT_1)
+/* checks whether given argument is bitarray */
+#define checkbitarray(L, i) (Bitarray *)luaL_checkudata(L, (i), BITARRAY_MT_1)
 
-/**
- * Creates a new bit array of n bits. all fields are initialized to 0.
- * @function new
- * @tparam integer nbits number of bits of the array
- * @treturn Bitarray|nil the newly created bitarray if successful
- */
-_BITARRAY_API static int l_new(lua_State *L)
+/* create an array and push it to the top of the stack */
+static int _l_new(lua_State *L, size_t nbits)
 {
-    size_t nbits = (size_t)luaL_checkinteger(L, 1);
-    luaL_argcheck(L, nbits > 0, 1, "invalid size");
-
     Bitarray *ba = (Bitarray *)lua_newuserdata(L, sizeof(Bitarray));
     if (bitarray_validate(ba, nbits) == 0)
         /* if fails to allocate array */
@@ -47,6 +39,20 @@ _BITARRAY_API static int l_new(lua_State *L)
 }
 
 /**
+ * Creates a new bit array of n bits. all fields are initialized to 0.
+ * @function new
+ * @tparam integer nbits number of bits of the array
+ * @treturn Bitarray|nil the newly created bitarray if successful
+ */
+_BITARRAY_API static int l_new(lua_State *L)
+{
+    lua_Integer nbits = luaL_checkinteger(L, 1);
+    luaL_argcheck(L, nbits > 0, 1, "invalid size");
+
+    return _l_new(L, (size_t)nbits);
+}
+
+/**
  * Creates a new bit array, identical to src.
  * @function copyfrom
  * @tparam Bitarray src
@@ -54,14 +60,10 @@ _BITARRAY_API static int l_new(lua_State *L)
  */
 _BITARRAY_API static int l_copyfrom(lua_State *L)
 {
-    Bitarray *ba = checkbitarray(L);
+    Bitarray *ba = checkbitarray(L, 1);
 
-    Bitarray *tg = (Bitarray *)lua_newuserdata(L, sizeof(Bitarray));
-    if (bitarray_validate(tg, ba->size) == 0)
+    if (_l_new(L, ba->size) == 0)
         return 0;
-
-    luaL_getmetatable(L, BITARRAY_MT_1);
-    lua_setmetatable(L, -2);
     bitarray_copyvalues(ba, (Bitarray *)lua_touserdata(L, -1));
     return 1;
 }
@@ -72,10 +74,23 @@ _BITARRAY_API static int l_copyfrom(lua_State *L)
 
 static Bitarray *checkbitarray_and_index(lua_State *L, size_t *i)
 {
-    Bitarray *ba = checkbitarray(L);
+    Bitarray *ba = checkbitarray(L, 1);
     lua_Integer i_ = luaL_checkinteger(L, 2) - 1;
     luaL_argcheck(L, 0 <= i_ && i_ < ba->size, 2, "index out of range");
     *i = (size_t)i_;
+    return ba;
+}
+
+/* default opt chain: [,1 [,array size]] */
+static Bitarray *checkbitarray_and_optrange(lua_State *L, size_t *from, size_t *to)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    lua_Integer from_ = luaL_optinteger(L, 2, 1) - 1;
+    luaL_argcheck(L, 0 <= from_ && from_ < ba->size, 2, "invalid index");
+    lua_Integer to_ = luaL_optinteger(L, 3, ba->size);
+    luaL_argcheck(L, to_ > from_+1 && to_ <= ba->size, 3, "invalid index");
+    *from = (size_t)from_;
+    *to = (size_t)to_;
     return ba;
 }
 
@@ -138,7 +153,7 @@ _BITARRAY_API static int getbit(lua_State *L)
  */
 _BITARRAY_API static int len(lua_State *L)
 {
-    Bitarray *ba = checkbitarray(L);
+    Bitarray *ba = checkbitarray(L, 1);
     lua_pushinteger(L, ba->size);
     return 1;
 }
@@ -156,7 +171,7 @@ _BITARRAY_API static int len(lua_State *L)
  */
 _BITARRAY_API static int fill(lua_State *L)
 {
-    Bitarray *ba = checkbitarray(L);
+    Bitarray *ba = checkbitarray(L, 1);
     luaL_checkany(L, 2);
 
     bitarray_fill(ba, lua_toboolean(L, 2));
@@ -178,7 +193,7 @@ _BITARRAY_API static int fill(lua_State *L)
  */
 _BITARRAY_API static int flip(lua_State *L)
 {
-    Bitarray *ba = checkbitarray(L);
+    Bitarray *ba = checkbitarray(L, 1);
     lua_Integer i = luaL_optinteger(L, 2, 0);
     luaL_argcheck(L, 0 <= i && i <= ba->size, 2, "index out of range");
     if (i == 0)
@@ -190,7 +205,7 @@ _BITARRAY_API static int flip(lua_State *L)
 }
 
 /**
- * <i>May mutate the array. Does not mutate the existing part. </i> <br />
+ * <i>May mutate the array. </i> <br />
  * Resize the array to length n. if new size is greater, the new bits
  * are initialized to 0, otherwise additional bits are lost.
  * @function resize
@@ -200,7 +215,7 @@ _BITARRAY_API static int flip(lua_State *L)
  */
 _BITARRAY_API static int resize(lua_State *L)
 {
-    Bitarray *ba = checkbitarray(L);
+    Bitarray *ba = checkbitarray(L, 1);
     lua_Integer i = luaL_checkinteger(L, 2);
     luaL_argcheck(L, 0 < i, 2, "invalid length");
 
@@ -211,10 +226,137 @@ _BITARRAY_API static int resize(lua_State *L)
     return 1;
 }
 
+/**
+ * <i>Mutates the array.</i> <br />
+ * Reverse the contents of the array.
+ * @function reverse
+ * @treturn Bitarray the original bit array reference
+ */
+_BITARRAY_API static int reverse(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    bitarray_reverse(ba);
+    return 1;
+}
+
+/**
+ * <i>Does not mutate the array.</i> <br />
+ * Creates a new array with bits obtained from those at index i to n in the
+ * original array, inclusive. Resultant length is n - i + 1.
+ * @function slice
+ * @tparam[opt] integer i the starting index, default 1
+ * @tparam[optchain] integer n the ending index, default the length of the array.
+ * @treturn Bitarray|nil the newly created bit array reference if successful
+ */
+_BITARRAY_API static int slice(lua_State *L)
+{
+    size_t from, to;
+    Bitarray *ba = checkbitarray_and_optrange(L, &from, &to);
+
+    if (_l_new(L, to - from) == 0)
+        return 0;
+    bitarray_copyvalues2(ba, lua_touserdata(L, -1), from, to, 0);
+    return 1;
+}
+
+/**
+ * <i>Does not mutate the array.</i> <br />
+ * Compares whether two arrays are identical (same value and length). <br />
+ * Operator __eq is overloaded with this method.
+ * @function equal
+ * @tparam Bitarray other
+ * @treturn boolean
+ * @usage
+ * local a = Bitarray.new(10)
+ * local b = Bitarray.copyfrom(a)
+ * a:equal(b)          -- true
+ * a == b:resize(1)    -- false
+ */
+_BITARRAY_API static int equal(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    Bitarray *o = checkbitarray(L, 2);
+    lua_pushboolean(L, bitarray_equal(ba, o));
+    return 1;
+}
+
+#define BITARRAY_AT_TYPE(TYPE) \
+    static int at_ ## TYPE(lua_State *L) \
+    { \
+        size_t i; \
+        Bitarray *ba = checkbitarray_and_index(L, &i); \
+        size_t tgt = sizeof(TYPE) * CHAR_BIT; \
+        luaL_argcheck(L, ba->size - i + 1 > tgt, 2, \
+            "too few bits to construct this type"); \
+        \
+        TYPE res = 0; \
+        for (size_t j = i, k = 0; k < tgt; ++j, ++k) { \
+            WORD mask; \
+            WORD *word = bitarray_get_bit_access(ba, j, &mask); \
+            TYPE maskt = (TYPE)1 << (TYPE)(tgt-k-1); \
+            res = (*word & mask) ? (res | maskt) : (res & ~maskt); \
+        } \
+        lua_pushinteger(L, (lua_Integer)res); \
+        return 1; \
+    }
+
+/** 
+ * <i>Does not mutate the array.</i> <br />
+ * Converts the contents starting at index i to an uint8 (uchar) integer.
+ * The array should be big enough to hold bits required to construct the
+ * type.
+ * The leftmost bit corresponds to the most significant digit of the number
+ * and the last bit corresponds to the least significant digit.
+ * @function at_uint8
+ * @tparam integer i
+ * @treturn integer
+ * @usage
+ * local a = Bitarray.new(10):set(2, 1):set(3, 1):set(4, 1):set(5, 1):set(7, 1)
+ * a:at_uint8(2)   -- 244
+ */
+_BITARRAY_API BITARRAY_AT_TYPE(uint8_t)
+
+/** 
+ * <i>Does not mutate the array.</i> <br />
+ * Converts the contents starting at index i to an uint16 (wchar_t) integer.
+ * @see at_uint8
+ * @function at_uint16
+ * @tparam integer i
+ * @treturn integer
+ */
+_BITARRAY_API BITARRAY_AT_TYPE(uint16_t)
+
+/** 
+ * <i>Does not mutate the array.</i> <br />
+ * Converts the contents starting at index i to an uint32 integer.
+ * @see at_uint8
+ * @function at_uint32
+ * @tparam integer i
+ * @treturn integer
+ */
+_BITARRAY_API BITARRAY_AT_TYPE(uint32_t)
+
+/** 
+ * <i>Does not mutate the array.</i> <br />
+ * Converts the contents starting at index i to an uint64 integer.
+ * @see at_uint8
+ * @function at_uint64
+ * @tparam integer i
+ * @treturn integer
+ * @usage
+ * -- lua5.3 added support for displaying and manipulating unsigned integers,
+ * -- prior to that this function may not work as intended always
+ * local a = Bitarray.new(64):fill(1)
+ * string.format('%u', a:at_uint64(1)) -- 18446744073709551615
+ */
+_BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
+
+#undef BITARRAY_AT_TYPE
+
 /* finalizer for bitarray */
 _BITARRAY_API static int gc(lua_State *L)
 {
-    Bitarray *ba = (Bitarray *)luaL_checkudata(L, 1, BITARRAY_MT_1);
+    Bitarray *ba = checkbitarray(L, 1);
     bitarray_invalidate(ba);
     return 0;
 }
@@ -249,10 +391,18 @@ static const struct luaL_Reg bitarraylib_m1[] =
     { "len", len },
     { "fill", fill },
     { "flip", flip },
+    { "equal", equal },
     { "resize", resize },
+    { "reverse", reverse },
+    { "slice", slice },
+    { "at_uint8", at_uint8_t },
+    { "at_uint16", at_uint16_t },
+    { "at_uint32", at_uint32_t },
+    { "at_uint64", at_uint64_t },
     { "__index", get },
     { "__newindex", setbit },
     { "__len", len },
+    { "__eq", equal },
     { "__gc", gc },
     { NULL, NULL }
 };

@@ -75,4 +75,45 @@ do
         for i = 1, 1024 do check(not b[i]) end
 end
 
+-- eq
+do
+    local a = Bitarray.new(10)
+        a:resize(144)
+    local b = Bitarray.new(144)
+        check(a:equal(b))
+        b[5] = true
+        check(not a:equal(b))
+        a:flip()
+        check(a ~= b)
+        b:fill(true)
+        check(a == b)
+        b:resize(143)
+        check(a ~= b)
+end
+
+-- reverse
+do
+    local a = Bitarray.new(50)
+    local b = Bitarray.copyfrom(a):reverse()
+        check(a == b)
+        a:set(1, true):set(3, true):set(4, true):set(44, true)
+        b:set(50, true):set(48, true):set(47, true):set(7, true):reverse()
+        check(a == b)
+end
+
+-- slice
+do
+    local a = Bitarray.new(167):fill(true)
+        check(a == a:slice() and a == a:slice(1))
+    local c = a:slice(1, 128)
+        for i = 1, 128 do check(c[i]) end
+    local d = a:slice(1, 130)
+        for i = 1, 130 do check(d[i]) end
+    a[66] = false
+    local e = a:slice(26, 68)
+        for i = 1, 40 do check(e[i]) end
+        check(not e[41])
+        for i = 42, 43 do check(e[i]) end
+end
+
 print('all tests passed!')

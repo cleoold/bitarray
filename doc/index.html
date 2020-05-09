@@ -102,6 +102,42 @@
 	<td class="name" nowrap><a href="#Bitarray:resize">Bitarray:resize (n)</a></td>
 	<td class="summary"><i>May mutate the array.</td>
 	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:reverse">Bitarray:reverse ()</a></td>
+	<td class="summary"><i>Mutates the array.</i> <br />
+ Reverse the contents of the array.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:slice">Bitarray:slice ([i[, n]])</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Creates a new array with bits obtained from those at index i to n in the
+ original array, inclusive.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:equal">Bitarray:equal (other)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Compares whether two arrays are identical (same value and length).</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:at_uint8">Bitarray:at_uint8 (i)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint8 (uchar) integer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:at_uint16">Bitarray:at_uint16 (i)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint16 (wchar_t) integer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:at_uint32">Bitarray:at_uint32 (i)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint32 integer.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:at_uint64">Bitarray:at_uint64 (i)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint64 integer.</td>
+	</tr>
 </table>
 
 <br/>
@@ -373,7 +409,7 @@
     <strong>Bitarray:resize (n)</strong>
     </dt>
     <dd>
-    <i>May mutate the array.  Does not mutate the existing part. </i> <br />
+    <i>May mutate the array.  </i> <br />
  Resize the array to length n. if new size is greater, the new bits
  are initialized to 0, otherwise additional bits are lost.
 
@@ -396,6 +432,239 @@
 
 
 
+
+</dd>
+    <dt>
+    <a name = "Bitarray:reverse"></a>
+    <strong>Bitarray:reverse ()</strong>
+    </dt>
+    <dd>
+    <i>Mutates the array.</i> <br />
+ Reverse the contents of the array.
+
+
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a></span>
+        the original bit array reference
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Bitarray:slice"></a>
+    <strong>Bitarray:slice ([i[, n]])</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Creates a new array with bits obtained from those at index i to n in the
+ original array, inclusive.  Resultant length is n - i + 1.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+         the starting index, default 1
+        </li>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">integer</span></span>
+         the ending index, default the length of the array.
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a> or <span class="type">nil</span></span>
+        the newly created bit array reference if successful
+    </ol>
+
+
+
+
+</dd>
+    <dt>
+    <a name = "Bitarray:equal"></a>
+    <strong>Bitarray:equal (other)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Compares whether two arrays are identical (same value and length).  <br />
+ Operator __eq is overloaded with this method.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">other</span>
+            <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">boolean</span></span>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>)
+ <span class="keyword">local</span> b = Bitarray.copyfrom(a)
+ a:equal(b)          <span class="comment">-- true
+</span> a == b:resize(<span class="number">1</span>)    -- <span class="keyword">false</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:at_uint8"></a>
+    <strong>Bitarray:at_uint8 (i)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint8 (uchar) integer.
+ The array should be big enough to hold bits required to construct the
+ type.
+ The leftmost bit corresponds to the most significant digit of the number
+ and the last bit corresponds to the least significant digit.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">integer</span></span>
+
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>):set(<span class="number">2</span>, <span class="number">1</span>):set(<span class="number">3</span>, <span class="number">1</span>):set(<span class="number">4</span>, <span class="number">1</span>):set(<span class="number">5</span>, <span class="number">1</span>):set(<span class="number">7</span>, <span class="number">1</span>)
+ a:at_uint8(<span class="number">2</span>)   -- <span class="number">244</span></pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:at_uint16"></a>
+    <strong>Bitarray:at_uint16 (i)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint16 (wchar_t) integer.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">integer</span></span>
+
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#Bitarray:at_uint8">at_uint8</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "Bitarray:at_uint32"></a>
+    <strong>Bitarray:at_uint32 (i)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint32 integer.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">integer</span></span>
+
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#Bitarray:at_uint8">at_uint8</a>
+    </ul>
+
+
+</dd>
+    <dt>
+    <a name = "Bitarray:at_uint64"></a>
+    <strong>Bitarray:at_uint64 (i)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Converts the contents starting at index i to an uint64 integer.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><span class="type">integer</span></span>
+
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#Bitarray:at_uint8">at_uint8</a>
+    </ul>
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="comment">-- lua5.3 added support for displaying and manipulating unsigned integers,
+</span> <span class="comment">-- prior to that this function may not work as intended always
+</span> <span class="keyword">local</span> a = Bitarray.new(<span class="number">64</span>):fill(<span class="number">1</span>)
+ <span class="global">string</span>.format(<span class="string">'%u'</span>, a:at_uint64(<span class="number">1</span>)) -- <span class="number">18446744073709551615</span></pre>
+    </ul>
 
 </dd>
 </dl>

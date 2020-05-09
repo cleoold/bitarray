@@ -6,6 +6,7 @@ The data structure Bitarray stores bits (booleans) in an array in a memory-savin
 One can assign value (0 or 1) to each element as well as extract values from the array.
 
 ## Install from luarocks
+Will install the release version.
 ```sh
 luarocks install bitarray
 ```
