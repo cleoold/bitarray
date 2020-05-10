@@ -1,0 +1,118 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+   "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+<head>
+    <title>Lua Bitarray Reference</title>
+    <link rel="stylesheet" href="../ldoc.css" type="text/css" />
+</head>
+<body>
+
+<div id="container">
+
+<div id="product">
+	<div id="product_logo"></div>
+	<div id="product_name"><big><b></b></big></div>
+	<div id="product_description"></div>
+</div> <!-- id="product" -->
+
+
+<div id="main">
+
+
+<!-- Menu -->
+
+<div id="navigation">
+<br/>
+<h1>bitarray</h1>
+
+
+
+
+<h2>Examples</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><strong>encrypt_string.lua</strong></li>
+</ul>
+<h2>Modules</h2>
+<ul class="$(kind=='Topics' and '' or 'nowrap'">
+  <li><a href="../index.html">bitarray</a></li>
+</ul>
+
+</div>
+
+<div id="content">
+
+    <pre>
+<span class="comment">-- this is a string encryption example
+</span><span class="comment">-- the bitarray simplifies all bitwise tricks into plain array access
+</span>
+<span class="keyword">local</span> newbitarray = <span class="global">require</span><span class="string">'bitarray'</span>.new
+
+<span class="keyword">local</span> <span class="keyword">function</span> swapitem(t, i, j)
+    <span class="keyword">local</span> tmp = t[i]
+    t[i] = t[j]
+    t[j] = tmp
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> bitarray_fromcharstring(s)
+    <span class="global">assert</span>(<span class="global">type</span>(s) == <span class="string">'string'</span> <span class="keyword">and</span> s ~= <span class="string">''</span>)
+    <span class="keyword">local</span> bits = newbitarray(#s * <span class="number">8</span>)
+    <span class="keyword">for</span> i = <span class="number">1</span>, #s <span class="keyword">do</span>
+        <span class="keyword">local</span> k = <span class="number">1</span> + (i-<span class="number">1</span>) * <span class="number">8</span>
+        bits:from_uint8(s:byte(i), k)
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> bits
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> bitarray_tocharstring(bits)
+    <span class="keyword">local</span> res = {}
+    <span class="keyword">for</span> i = <span class="number">1</span>, #bits, <span class="number">8</span> <span class="keyword">do</span>
+        <span class="keyword">local</span> num = bits:at_uint8(i)
+        res[#res+<span class="number">1</span>] = <span class="global">string</span>.char(num)
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> <span class="global">table</span>.concat(res)
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> secret(len)
+    <span class="keyword">local</span> mask = newbitarray(len):fill(<span class="keyword">true</span>)
+    <span class="keyword">for</span> i = <span class="number">1</span>, len-<span class="number">1</span>, <span class="number">5</span> <span class="keyword">do</span>
+        mask:set(i, <span class="keyword">false</span>):set(i+<span class="number">1</span>, <span class="keyword">false</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> mask
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> encode(s)
+    <span class="keyword">local</span> bits = bitarray_fromcharstring(s)
+    <span class="keyword">for</span> i = <span class="number">1</span>, #bits, <span class="number">8</span> <span class="keyword">do</span>
+        <span class="comment">-- for each 8-bit char, swap 2nd with 3rd, swap 4th with 7th bit
+</span>        swapitem(bits, i+<span class="number">1</span>, i+<span class="number">2</span>)
+        swapitem(bits, i+<span class="number">3</span>, i+<span class="number">6</span>)
+    <span class="keyword">end</span>
+    bits:reverse()
+    bits = bits:bxor(secret(#bits))
+    <span class="comment">-- rebuild the string
+</span>    <span class="keyword">return</span> bitarray_tocharstring(bits)
+<span class="keyword">end</span>
+
+<span class="keyword">local</span> <span class="keyword">function</span> decode(s)
+    <span class="keyword">local</span> bits = bitarray_fromcharstring(s)
+    bits = bits:bxor(secret(#bits))
+    bits:reverse()
+    <span class="keyword">for</span> i = <span class="number">1</span>, #bits, <span class="number">8</span> <span class="keyword">do</span>
+        swapitem(bits, i+<span class="number">1</span>, i+<span class="number">2</span>)
+        swapitem(bits, i+<span class="number">3</span>, i+<span class="number">6</span>)
+    <span class="keyword">end</span>
+    <span class="keyword">return</span> bitarray_tocharstring(bits)
+<span class="keyword">end</span>
+
+<span class="keyword">return</span> { encode = encode, decode = decode }</pre>
+
+
+</div> <!-- id="content" -->
+</div> <!-- id="main" -->
+<div id="about">
+<i>generated by <a href="http://github.com/stevedonovan/LDoc">LDoc 1.4.2</a></i>
+</div> <!-- id="about" -->
+</div> <!-- id="container" -->
+</body>
+</html>
