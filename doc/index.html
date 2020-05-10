@@ -144,6 +144,16 @@
  Perform a bitwise XOR and return the new array.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#Bitarray:shiftleft">Bitarray:shiftleft (n)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Shift all content left n bits and return the new array.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:shiftright">Bitarray:shiftright (n)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Shift all content right n bits and return the new array.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#Bitarray:at_uint8">Bitarray:at_uint8 (i)</a></td>
 	<td class="summary"><i>Does not mutate the array.</i> <br />
  Converts the contents starting at index i to an uint8 (uchar) integer.</td>
@@ -759,6 +769,77 @@
 
 </dd>
     <dt>
+    <a name = "Bitarray:shiftleft"></a>
+    <strong>Bitarray:shiftleft (n)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Shift all content left n bits and return the new array.  Extra bits are
+ discarded and empty bits are filled with 0. <br />
+ Operator __shl is overloaded with this method. (5.3+)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">integer</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a> or <span class="type">nil</span></span>
+        the newly created bit array reference if successful
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">8</span>):from_uint8(<span class="number">15</span>)
+ <span class="global">print</span>(a)      <span class="comment">-- Bitarray[0,0,0,0,1,1,1,1]
+</span> <span class="global">print</span>(a &lt;&lt; <span class="number">2</span>) -- Bitarray[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>]</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:shiftright"></a>
+    <strong>Bitarray:shiftright (n)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Shift all content right n bits and return the new array.  Extra bits are
+ discarded and empty bits are filled with 0. The shift is unsigned. <br />
+ Operator __shr is overloaded with this method. (5.3+)
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">integer</span></span>
+
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a> or <span class="type">nil</span></span>
+        the newly created bit array reference if successful
+    </ol>
+
+
+    <h3>See also:</h3>
+    <ul>
+         <a href="index.html#Bitarray:shiftleft">shiftleft</a>
+    </ul>
+
+
+</dd>
+    <dt>
     <a name = "Bitarray:at_uint8"></a>
     <strong>Bitarray:at_uint8 (i)</strong>
     </dt>
@@ -896,7 +977,7 @@
         <pre class="example">
  <span class="comment">-- lua5.3 added support for displaying and manipulating unsigned integers,
 </span> <span class="comment">-- prior to that this function may not work as intended always
-</span> <span class="keyword">local</span> a = Bitarray.new(<span class="number">64</span>):fill(<span class="number">1</span>)
+</span> <span class="keyword">local</span> a = Bitarray.new(<span class="number">64</span>):fill(<span class="keyword">true</span>)
  <span class="global">string</span>.format(<span class="string">'%u'</span>, a:at_uint64(<span class="number">1</span>)) -- <span class="number">18446744073709551615</span></pre>
     </ul>
 

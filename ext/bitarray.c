@@ -261,7 +261,7 @@ _BITARRAY_API static int slice(lua_State *L)
 
     if (_l_new(L, to - from) == 0)
         return 0;
-    bitarray_copyvalues2(ba, lua_touserdata(L, -1), from, to, 0);
+    bitarray_copyvalues2(ba, (Bitarray *)lua_touserdata(L, -1), from, to, 0);
     return 1;
 }
 
@@ -306,7 +306,7 @@ _BITARRAY_API static int concat(lua_State *L)
 
     if (_l_new(L, ba->size + o->size) == 0)
         return 0;
-    Bitarray *r = lua_touserdata(L, -1);
+    Bitarray *r = (Bitarray *)lua_touserdata(L, -1);
     bitarray_copyvalues(ba, r);
     bitarray_copyvalues2(o, r, 0, o->size, ba->size);
     return 1;
@@ -328,7 +328,7 @@ _BITARRAY_API static int bnot(lua_State *L)
 
     if (_l_new(L, ba->size) == 0)
         return 0;
-    Bitarray *r = lua_touserdata(L, -1);
+    Bitarray *r = (Bitarray *)lua_touserdata(L, -1);
     bitarray_copyvalues(ba, r);
     bitarray_flip(r);
     return 1;
@@ -344,7 +344,7 @@ _BITARRAY_API static int bnot(lua_State *L)
         \
         if (_l_new(L, ba->size) == 0) \
             return 0; \
-        Bitarray *r = lua_touserdata(L, -1); \
+        Bitarray *r = (Bitarray *)lua_touserdata(L, -1); \
         BITARRAY_WORD_ITER(r, i, \
             r->values[i] = ba->values[i] OP o->values[i]; \
         ); \
@@ -391,6 +391,61 @@ _BITARRAY_API BITARRAY_BIT_BIOP(bor, |)
 _BITARRAY_API BITARRAY_BIT_BIOP(bxor, ^)
 
 #undef BITARRAY_BIT_BIOP
+
+/**
+ * <i>Does not mutate the array.</i> <br />
+ * Shift all content left n bits and return the new array. Extra bits are
+ * discarded and empty bits are filled with 0. <br />
+ * Operator __shl is overloaded with this method. (5.3+)
+ * @function shiftleft
+ * @tparam integer n
+ * @treturn Bitarray|nil the newly created bit array reference if successful
+ * @usage
+ * local a = Bitarray.new(8):from_uint8(15)
+ * print(a)      -- Bitarray[0,0,0,0,1,1,1,1]
+ * print(a << 2) -- Bitarray[0,0,1,1,1,1,0,0]
+ */
+_BITARRAY_API static int shl(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    long s = (long)luaL_checkinteger(L, 2);
+
+    if (_l_new(L, ba->size) == 0)
+        return 0;
+    Bitarray *r = (Bitarray *)lua_touserdata(L, -1);
+    bitarray_copyvalues(ba, r);
+    if (s >= 0)
+        bitarray_be_lshift(r, (size_t)s);
+    else
+        bitarray_be_rshift(r, (size_t)-s);
+    return 1;
+}
+
+/**
+ * <i>Does not mutate the array.</i> <br />
+ * Shift all content right n bits and return the new array. Extra bits are
+ * discarded and empty bits are filled with 0. The shift is unsigned. <br />
+ * Operator __shr is overloaded with this method. (5.3+)
+ * @see shiftleft
+ * @function shiftright
+ * @tparam integer n
+ * @treturn Bitarray|nil the newly created bit array reference if successful
+ */
+_BITARRAY_API static int shr(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    long s = (long)luaL_checkinteger(L, 2);
+
+    if (_l_new(L, ba->size) == 0)
+        return 0;
+    Bitarray *r = (Bitarray *)lua_touserdata(L, -1);
+    bitarray_copyvalues(ba, r);
+    if (s >= 0)
+        bitarray_be_rshift(r, (size_t)s);
+    else
+        bitarray_be_lshift(r, (size_t)-s);
+    return 1;
+}
 
 #define BITARRAY_AT_TYPE(TYPE) \
     static int at_ ## TYPE(lua_State *L) \
@@ -459,7 +514,7 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint32_t)
  * @usage
  * -- lua5.3 added support for displaying and manipulating unsigned integers,
  * -- prior to that this function may not work as intended always
- * local a = Bitarray.new(64):fill(1)
+ * local a = Bitarray.new(64):fill(true)
  * string.format('%u', a:at_uint64(1)) -- 18446744073709551615
  */
 _BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
@@ -652,6 +707,8 @@ static const struct luaL_Reg bitarraylib_m1[] =
     { "band", band },
     { "bor", bor },
     { "bxor", bxor },
+    { "shiftleft", shl },
+    { "shiftright", shr },
     { "resize", resize },
     { "reverse", reverse },
     { "slice", slice },
@@ -675,6 +732,8 @@ static const struct luaL_Reg bitarraylib_m1[] =
     { "__band", band },
     { "__bor", bor },
     { "__bxor", bxor },
+    { "__shl", shl },
+    { "__shr", shr },
 #endif
     { "__gc", gc },
     { "__tostring", tostring },

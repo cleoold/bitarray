@@ -164,3 +164,21 @@ static int bitarray_equal(Bitarray *l, Bitarray *r)
             return 0;
     return 1;
 }
+
+static void bitarray_be_lshift(Bitarray *ba, size_t s)
+{
+    size_t sz = ba->size;
+    for (size_t i = 0; i + s < sz; ++i)
+        bitarray_set_bit(ba, i, bitarray_get_bit(ba, i + s));
+    for (size_t i = sz > s ? sz - s : 0; i < sz; ++i)
+        bitarray_set_bit(ba, i, 0);
+}
+
+static void bitarray_be_rshift(Bitarray *ba, size_t s)
+{
+    size_t sz = ba->size;
+    for (size_t i = 0; i + s < sz; ++i)
+        bitarray_set_bit(ba, sz - i - 1, bitarray_get_bit(ba, sz - i - 1 - s));
+    for (size_t i = sz > s ? sz - s : 0; i < sz; ++i)
+        bitarray_set_bit(ba, sz - i - 1, 0);
+}
