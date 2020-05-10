@@ -68,11 +68,14 @@ do
         check(not a[209] and a[210] and a[217])
         check(#a == 217)
     local b = Bitarray.new(32)
-        b:resize(1000)
-        for i = 1, 1000 do check(not b[i]) end
-        checkerror(function() return b[1001] end)
+        b:resize(10000)
+        for i = 1, 10000 do check(not b[i]) end
+        checkerror(function() return b[10001] end)
+        b:fill(true)
         b:resize(1024)
-        for i = 1, 1024 do check(not b[i]) end
+        for i = 1, 1024 do check(b[i]) end
+        b:resize(10000)
+        for i = 1025, 10000 do check(not b[i]) end
 end
 
 -- eq
@@ -128,6 +131,15 @@ do
         check(h..h..h == Bitarray.new(15):flip())
 end
 
+-- from/to uints
+do
+    local a = Bitarray.new(32):from_uint32(402654856)
+        check(a == Bitarray.new(32):set(4, true):set(5, true):set(22, true):set(23, true):set(25, true):set(29, true))
+        check(a:at_uint32(1) == 402654856)
+    local b = Bitarray.new(64):from_uint32(0x7FFFFFFF, 33)
+        check(b == Bitarray.new(33)..Bitarray.new(31):fill(true))
+end
+
 -- bitwise
 do
     local a = Bitarray.new(177)
@@ -143,6 +155,22 @@ do
         check(a:bor(b) == a)
     local c = Bitarray.new(10):set(3, 1):set(7, 1)
         check(c:bxor(a:slice(1, 10)) == Bitarray.new(10):set(1, true):set(5, true):set(9, true))
+    local d = Bitarray.new(10):fill(true)
+        check(d == d:shiftleft(0))
+        check(d:shiftleft(1) == d:slice():set(10, false))
+        check(d:shiftleft(9) == Bitarray.new(10):set(1, true))
+        check(d:shiftleft(10) == Bitarray.new(10))
+        check(d:shiftleft(11) == Bitarray.new(10))
+        check(d == d:shiftright(0))
+        check(d:shiftright(1) == d:slice():set(1, false))
+        check(d:shiftright(9) == Bitarray.new(10):set(10, true))
+        check(d:shiftright(10) == Bitarray.new(10))
+        check(d:shiftright(11) == Bitarray.new(10))
+        check(d:shiftleft(4) == d:shiftright(-4))
+    local e = Bitarray.new(32):from_uint32(146)
+        check(e:shiftleft(6):at_uint32(1) == 9344)
+        check(e:shiftright(6):at_uint32(1) == 2)
+        check(e:shiftright(-4) == e:shiftleft(4))
 end
 
 print('all tests passed!')
