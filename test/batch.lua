@@ -101,7 +101,7 @@ do
         check(a == b)
 end
 
--- slice and from_bitarray
+-- slice, concat and from_bitarray
 do
     local a = Bitarray.new(167):fill(true)
         check(a == a:slice() and a == a:slice(1))
@@ -120,8 +120,29 @@ do
         check(#f == 44)
         for i = 1, 22 do check(f[i]) end
         for i = 23, 44 do check(not f[i]) end
-    local g = Bitarray.new(10):from_bitarray(Bitarray.new(5):fill(true):set(3, false), 6)
+    local _g = Bitarray.new(5):fill(true):set(3, false)
+    local g = Bitarray.new(10):from_bitarray(_g, 6)
         check(g == Bitarray.new(10):set(6, true):set(7, true):set(9, true):set(10, true))
+        check(g == Bitarray.new(5):concat(_g))
+    local h = g:slice(6):set(3, true)
+        check(h..h..h == Bitarray.new(15):flip())
+end
+
+-- bitwise
+do
+    local a = Bitarray.new(177)
+    local b = Bitarray.new(177)
+    for i = 1, 177, 2 do a[i] = true end
+    for i = 2, 177, 2 do b[i] = true end
+        check(a:bnot() == b)
+        check(b:bnot() == a)
+        check(a:band(b) == Bitarray.new(177))
+        check(a:bor(b) == Bitarray.new(177):fill(true))
+        check(a:bxor(b) == Bitarray.new(177):fill(true))
+        b:fill(false)
+        check(a:bor(b) == a)
+    local c = Bitarray.new(10):set(3, 1):set(7, 1)
+        check(c:bxor(a:slice(1, 10)) == Bitarray.new(10):set(1, true):set(5, true):set(9, true))
 end
 
 print('all tests passed!')

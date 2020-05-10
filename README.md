@@ -27,7 +27,7 @@ for i = 1, #a do print(a[i]) end
 -- true false false false false false false false false false
 ```
 
-## [Documentation](doc/index.html)
+## [Documentation](https://cleoold.github.io/bitarray/doc/)
 Requiring [ldoc](http://stevedonovan.github.io/ldoc/), available by issuing
 ```sh
 make doc

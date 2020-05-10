@@ -14,7 +14,7 @@ typedef unsigned int WORD;
 /* gets the word that contains the bit corresponding to a given index i */
 #define I_WORD(i)         ((WORD)(i) / BITS_PER_WORD)
 /*  computes a mask to access the correct bit inside this word */
-#define I_BIT(i)          (1 << ((WORD)(i) % BITS_PER_WORD))
+#define I_BIT(i)          ((WORD)1 << ((WORD)(i) % BITS_PER_WORD))
 /* computes how many words to store n bits */
 #define WORDS_FOR_BITS(n) (I_WORD((n) - 1) + 1)
 
@@ -23,7 +23,7 @@ typedef unsigned int WORD;
 typedef struct Bitarray
 {
     size_t size;
-    WORD *values;
+    WORD *values; /* uses little endian to store bits */
 } Bitarray;
 
 /* allocate space to store n bits for ba and set them to 0,
@@ -78,16 +78,16 @@ static void bitarray_flip_bit(Bitarray *ba, size_t i)
 }
 
 /* for loop that always set the unused bits to 0 */
-#define BITARRAY_WORD_ITER(ba, EXPR) do { \
+#define BITARRAY_WORD_ITER(ba, I, EXPR) do { \
     size_t nwords = WORDS_FOR_BITS((ba)->size); \
-    for (size_t i = 0; i < nwords; ++i) { \
+    for (size_t (I) = 0; (I) < nwords; ++(I)) { \
         EXPR } \
-    for (size_t i = (ba)->size; i < nwords * BITS_PER_WORD; ++i) \
-        bitarray_set_bit((ba), i, 0); } while(0) \
+    for (size_t (I) = (ba)->size; (I) < nwords * BITS_PER_WORD; ++(I)) \
+        bitarray_set_bit((ba), (I), 0); } while(0) \
 
 static void bitarray_flip(Bitarray *ba)
 {
-    BITARRAY_WORD_ITER(ba,
+    BITARRAY_WORD_ITER(ba, i,
         ba->values[i] = ~ba->values[i];
     );
 }
@@ -96,7 +96,7 @@ static void bitarray_flip(Bitarray *ba)
 static void bitarray_fill(Bitarray *ba, int b)
 {
     WORD bb = b ? (WORD)-1 : 0;
-    BITARRAY_WORD_ITER(ba,
+    BITARRAY_WORD_ITER(ba, i,
         ba->values[i] = bb;
     );
 }
