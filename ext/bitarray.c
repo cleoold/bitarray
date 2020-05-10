@@ -16,7 +16,7 @@
  * Describes the loaded bitarray library info (version and lua version)
  * @string __version
  */
-#define BITARRAY_INFO "bitarray 1.3 for " LUA_VERSION
+#define BITARRAY_INFO "bitarray 1.4 for " LUA_VERSION
 
 #define _BITARRAY_API
 
