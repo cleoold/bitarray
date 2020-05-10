@@ -154,22 +154,22 @@
  Shift all content right n bits and return the new array.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#Bitarray:at_uint8">Bitarray:at_uint8 (i)</a></td>
+	<td class="name" nowrap><a href="#Bitarray:at_uint8">Bitarray:at_uint8 ([i])</a></td>
 	<td class="summary"><i>Does not mutate the array.</i> <br />
  Converts the contents starting at index i to an uint8 (uchar) integer.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#Bitarray:at_uint16">Bitarray:at_uint16 (i)</a></td>
+	<td class="name" nowrap><a href="#Bitarray:at_uint16">Bitarray:at_uint16 ([i])</a></td>
 	<td class="summary"><i>Does not mutate the array.</i> <br />
  Converts the contents starting at index i to an uint16 integer.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#Bitarray:at_uint32">Bitarray:at_uint32 (i)</a></td>
+	<td class="name" nowrap><a href="#Bitarray:at_uint32">Bitarray:at_uint32 ([i])</a></td>
 	<td class="summary"><i>Does not mutate the array.</i> <br />
  Converts the contents starting at index i to an uint32 integer.</td>
 	</tr>
 	<tr>
-	<td class="name" nowrap><a href="#Bitarray:at_uint64">Bitarray:at_uint64 (i)</a></td>
+	<td class="name" nowrap><a href="#Bitarray:at_uint64">Bitarray:at_uint64 ([i])</a></td>
 	<td class="summary"><i>Does not mutate the array.</i> <br />
  Converts the contents starting at index i to an uint64 integer.</td>
 	</tr>
@@ -841,7 +841,7 @@
 </dd>
     <dt>
     <a name = "Bitarray:at_uint8"></a>
-    <strong>Bitarray:at_uint8 (i)</strong>
+    <strong>Bitarray:at_uint8 ([i])</strong>
     </dt>
     <dd>
     <i>Does not mutate the array.</i> <br />
@@ -856,7 +856,7 @@
     <ul>
         <li><span class="parameter">i</span>
             <span class="types"><span class="type">integer</span></span>
-
+         default to 1
         </li>
     </ul>
 
@@ -880,7 +880,7 @@
 </dd>
     <dt>
     <a name = "Bitarray:at_uint16"></a>
-    <strong>Bitarray:at_uint16 (i)</strong>
+    <strong>Bitarray:at_uint16 ([i])</strong>
     </dt>
     <dd>
     <i>Does not mutate the array.</i> <br />
@@ -912,7 +912,7 @@
 </dd>
     <dt>
     <a name = "Bitarray:at_uint32"></a>
-    <strong>Bitarray:at_uint32 (i)</strong>
+    <strong>Bitarray:at_uint32 ([i])</strong>
     </dt>
     <dd>
     <i>Does not mutate the array.</i> <br />
@@ -944,7 +944,7 @@
 </dd>
     <dt>
     <a name = "Bitarray:at_uint64"></a>
-    <strong>Bitarray:at_uint64 (i)</strong>
+    <strong>Bitarray:at_uint64 ([i])</strong>
     </dt>
     <dd>
     <i>Does not mutate the array.</i> <br />
@@ -978,7 +978,7 @@
  <span class="comment">-- lua5.3 added support for displaying and manipulating unsigned integers,
 </span> <span class="comment">-- prior to that this function may not work as intended always
 </span> <span class="keyword">local</span> a = Bitarray.new(<span class="number">64</span>):fill(<span class="keyword">true</span>)
- <span class="global">string</span>.format(<span class="string">'%u'</span>, a:at_uint64(<span class="number">1</span>)) -- <span class="number">18446744073709551615</span></pre>
+ <span class="global">string</span>.format(<span class="string">'%u'</span>, a:at_uint64()) -- <span class="number">18446744073709551615</span></pre>
     </ul>
 
 </dd>

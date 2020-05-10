@@ -450,8 +450,10 @@ _BITARRAY_API static int shr(lua_State *L)
 #define BITARRAY_AT_TYPE(TYPE) \
     static int at_ ## TYPE(lua_State *L) \
     { \
-        size_t i; \
-        Bitarray *ba = checkbitarray_and_index(L, &i); \
+        Bitarray *ba = checkbitarray(L, 1); \
+        lua_Integer i_ = luaL_optinteger(L, 2, 1) - 1; \
+        luaL_argcheck(L, 0 <= i_ && i_ < ba->size, 2, "invalid index"); \
+        size_t i = (size_t)i_; \
         size_t tgt = sizeof(TYPE) * CHAR_BIT; \
         luaL_argcheck(L, ba->size - i + 1 > tgt, 2, \
             "too few bits to construct this type"); \
@@ -475,7 +477,7 @@ _BITARRAY_API static int shr(lua_State *L)
  * The leftmost bit corresponds to the most significant digit of the number
  * and the last bit corresponds to the least significant digit (big endian).
  * @function at_uint8
- * @tparam integer i
+ * @tparam[opt] integer i default to 1
  * @treturn integer
  * @usage
  * local a = Bitarray.new(10):set(2, 1):set(3, 1):set(4, 1):set(5, 1):set(7, 1)
@@ -489,7 +491,7 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint8_t)
  * Converts the contents starting at index i to an uint16 integer.
  * @see at_uint8
  * @function at_uint16
- * @tparam integer i
+ * @tparam[opt] integer i
  * @treturn integer
  */
 _BITARRAY_API BITARRAY_AT_TYPE(uint16_t)
@@ -499,7 +501,7 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint16_t)
  * Converts the contents starting at index i to an uint32 integer.
  * @see at_uint8
  * @function at_uint32
- * @tparam integer i
+ * @tparam[opt] integer i
  * @treturn integer
  */
 _BITARRAY_API BITARRAY_AT_TYPE(uint32_t)
@@ -509,13 +511,13 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint32_t)
  * Converts the contents starting at index i to an uint64 integer.
  * @see at_uint8
  * @function at_uint64
- * @tparam integer i
+ * @tparam[opt] integer i
  * @treturn integer
  * @usage
  * -- lua5.3 added support for displaying and manipulating unsigned integers,
  * -- prior to that this function may not work as intended always
  * local a = Bitarray.new(64):fill(true)
- * string.format('%u', a:at_uint64(1)) -- 18446744073709551615
+ * string.format('%u', a:at_uint64()) -- 18446744073709551615
  */
 _BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
 
