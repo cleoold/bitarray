@@ -1,3 +1,6 @@
+![LuaRocks](https://img.shields.io/luarocks/v/cleoold/bitarray?color=blue)
+![dev-build-ci](https://github.com/cleoold/bitarray/workflows/dev-build-ci/badge.svg?branch=master)
+
 # [Bitarray](https://cleoold.github.io/bitarray/)
 
 A simple bit array (or bit set, bit string, boolean vector, ... whatever) data structure for Lua written in pure C.
