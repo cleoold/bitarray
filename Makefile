@@ -1,15 +1,22 @@
 CC = gcc
-PREFIX = /usr/local
-INC = /usr/include
+HOST_OS = $(shell uname)
 
 LUA_VERSION = 5.3
 
+ifneq ($(filter FreeBSD%, $(HOST_OS)),)
+	INC = /usr/local/include
+	LUA_VERSION_INC = $(subst .,,$(LUA_VERSION))
+else
+	INC = /usr/include
+	LUA_VERSION_INC = $(LUA_VERSION)
+endif
+
 OUTPUT_DIR = out
 
-LUA_INC = -I$(INC)/lua$(LUA_VERSION)
+LUA_INC = -I$(INC)/lua$(LUA_VERSION_INC)
 LUA_LIB = -llua$(LUA_VERSION)
 
-ifneq ($(filter cygwin% msys% mingw%, $(HOST_OS)),)
+ifneq ($(filter CYGWIN% msys% MINGW%, $(HOST_OS)),)
 	CORE = $(OUTPUT_DIR)/bitarray.dll
 	LIBFLAG = -shared
 	LIBS = $(LUA_LIB)

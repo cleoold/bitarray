@@ -25,6 +25,8 @@ make all LUA_VERSION=5.3 # or 5.1, 5.2
 The generated shared library will reside in `out` folder. Unfortunately, I understand the difficulty of finding the right install path
 for libraries for different platforms so it is your responsibility to copy the file there. Typically it can be `/usr/local/lib/lua/5.3/`.
 
+FreeBSD users will need to use `gmake`.
+
 ## [Documentation](https://cleoold.github.io/bitarray/doc/)
 Requiring [ldoc](http://stevedonovan.github.io/ldoc/), available by issuing
 ```sh
