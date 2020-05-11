@@ -16,7 +16,7 @@
  * Describes the loaded bitarray library info (version and lua version)
  * @string __version
  */
-#define BITARRAY_INFO "bitarray 1.4 for " LUA_VERSION
+#define BITARRAY_INFO "bitarray 1.5 for " LUA_VERSION
 
 #define _BITARRAY_API
 
@@ -210,7 +210,7 @@ _BITARRAY_API static int flip(lua_State *L)
  * are appended to the right and initialized to 0, otherwise additional
  * rightmost bits are lost.
  * @function resize
- * @tparam integer n
+ * @tparam integer n >= 1
  * @treturn Bitarray|nil the original bit array reference if successful,
  * otherwise nil
  */
@@ -262,6 +262,31 @@ _BITARRAY_API static int slice(lua_State *L)
     if (_l_new(L, to - from) == 0)
         return 0;
     bitarray_copyvalues2(ba, (Bitarray *)lua_touserdata(L, -1), from, to, 0);
+    return 1;
+}
+
+/**
+ * <i>Does not mutate the array.</i> <br />
+ * Repeat the array n times and return the new array. <br />
+ * @function rep
+ * @tparam integer n >= 1
+ * @treturn Bitarray|nil the newly created bit array reference if successful
+ * @usage
+ * local a = Bitarray.new(3):set(3, true)
+ * print(a:rep(4))  -- Bitarray[0,0,1,0,0,1,0,0,1,0,0,1]
+ */
+_BITARRAY_API static int rep(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    lua_Integer n = luaL_checkinteger(L, 2);
+    luaL_argcheck(L, n > 0, 2, "number of repetition must be positive integer");
+
+    if (_l_new(L, ba->size * n) == 0)
+        return 0;
+    Bitarray *r = (Bitarray *)lua_touserdata(L, -1);
+    bitarray_copyvalues(ba, r);
+    for (size_t i = 1; i < (size_t)n; ++i)
+        bitarray_copyvalues2(ba, r, 0, ba->size, i * ba->size);
     return 1;
 }
 
@@ -714,6 +739,7 @@ static const struct luaL_Reg bitarraylib_m1[] =
     { "resize", resize },
     { "reverse", reverse },
     { "slice", slice },
+    { "rep", rep },
     { "at_uint8", at_uint8_t },
     { "at_uint16", at_uint16_t },
     { "at_uint32", at_uint32_t },

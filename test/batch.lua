@@ -104,7 +104,7 @@ do
         check(a == b)
 end
 
--- slice, concat and from_bitarray
+-- slice, concat, rep and from_bitarray
 do
     local a = Bitarray.new(167):fill(true)
         check(a == a:slice() and a == a:slice(1))
@@ -127,8 +127,10 @@ do
     local g = Bitarray.new(10):from_bitarray(_g, 6)
         check(g == Bitarray.new(10):set(6, true):set(7, true):set(9, true):set(10, true))
         check(g == Bitarray.new(5):concat(_g))
+        check(g:rep(1) == g)
     local h = g:slice(6):set(3, true)
         check(h..h..h == Bitarray.new(15):flip())
+        check(g:rep(5) == g..g..g..g..g)
 end
 
 -- from/to uints
