@@ -28,7 +28,7 @@ typedef struct Bitarray
 
 /* allocate space to store n bits for ba and set them to 0,
    returns the number of bits available */
-static int bitarray_validate(Bitarray *ba, size_t nbits)
+static size_t bitarray_validate(Bitarray *ba, size_t nbits)
 {
     ba->values = (WORD *)calloc(WORDS_FOR_BITS(nbits), sizeof(WORD));
     if (ba->values != NULL)
@@ -104,7 +104,7 @@ static void bitarray_fill(Bitarray *ba, int b)
 /* resize the array. if new size is bigger, fill the new bit positions with 0.
    also set any unused bits to 0 (ie the gap between size and the actual end
    of WORDs). returns the new size, or 0 is returned if failed (array unchanged)*/
-static int bitarray_resize(Bitarray *ba, size_t nbits)
+static size_t bitarray_resize(Bitarray *ba, size_t nbits)
 {
     if (nbits == ba->size)
         return nbits;
