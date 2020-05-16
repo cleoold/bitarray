@@ -1,7 +1,5 @@
-#include "lua.h"
-#include "lauxlib.h"
-
 #include "bitarray_impl.h"
+#include "lualibdefs.h"
 
 
 /**
@@ -17,8 +15,6 @@
  * @string __version
  */
 #define BITARRAY_INFO "bitarray 1.5 for " LUA_VERSION
-
-#define _BITARRAY_API
 
 #define BITARRAY_MT_1 "cleoold.lua.bitarray_mt1"
 
@@ -44,7 +40,7 @@ static int _l_new(lua_State *L, size_t nbits)
  * @tparam integer nbits number of bits of the array
  * @treturn Bitarray|nil the newly created bitarray if successful
  */
-_BITARRAY_API static int l_new(lua_State *L)
+BITARRAY_API static int l_new(lua_State *L)
 {
     lua_Integer nbits = luaL_checkinteger(L, 1);
     luaL_argcheck(L, nbits > 0, 1, "invalid size");
@@ -58,7 +54,7 @@ _BITARRAY_API static int l_new(lua_State *L)
  * @tparam Bitarray src
  * @treturn Bitarray|nil the newly created bitarray if successful
  */
-_BITARRAY_API static int l_copyfrom(lua_State *L)
+BITARRAY_API static int l_copyfrom(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
 
@@ -108,7 +104,7 @@ static Bitarray *checkbitarray_and_optrange(lua_State *L, size_t *from, size_t *
  * a:set(4, true)
  * a[4] = true -- same
  */
-_BITARRAY_API static int setbit(lua_State *L)
+BITARRAY_API static int setbit(lua_State *L)
 {
     size_t i;
     Bitarray *ba = checkbitarray_and_index(L, &i);
@@ -131,7 +127,7 @@ _BITARRAY_API static int setbit(lua_State *L)
  * a:at(7) -- false
  * a[7]    -- false
  */
-_BITARRAY_API static int getbit(lua_State *L)
+BITARRAY_API static int getbit(lua_State *L)
 {
     size_t i;
     Bitarray *ba = checkbitarray_and_index(L, &i);
@@ -151,7 +147,7 @@ _BITARRAY_API static int getbit(lua_State *L)
  * a:len(a) -- 10
  * #a       -- 10
  */
-_BITARRAY_API static int len(lua_State *L)
+BITARRAY_API static int len(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     lua_pushinteger(L, ba->size);
@@ -169,7 +165,7 @@ _BITARRAY_API static int len(lua_State *L)
  * local a = Bitarray.new(10)
  * a:fill(true)  -- all bits set to 1
  */
-_BITARRAY_API static int fill(lua_State *L)
+BITARRAY_API static int fill(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     luaL_checkany(L, 2);
@@ -191,7 +187,7 @@ _BITARRAY_API static int fill(lua_State *L)
  * a:flip()    -- all bits set to true
  * a:flip(1)   -- sets first bit to true
  */
-_BITARRAY_API static int flip(lua_State *L)
+BITARRAY_API static int flip(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     lua_Integer i = luaL_optinteger(L, 2, 0);
@@ -214,7 +210,7 @@ _BITARRAY_API static int flip(lua_State *L)
  * @treturn Bitarray|nil the original bit array reference if successful,
  * otherwise nil
  */
-_BITARRAY_API static int resize(lua_State *L)
+BITARRAY_API static int resize(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     lua_Integer i = luaL_checkinteger(L, 2);
@@ -233,7 +229,7 @@ _BITARRAY_API static int resize(lua_State *L)
  * @function reverse
  * @treturn Bitarray the original bit array reference
  */
-_BITARRAY_API static int reverse(lua_State *L)
+BITARRAY_API static int reverse(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     bitarray_reverse(ba);
@@ -254,7 +250,7 @@ _BITARRAY_API static int reverse(lua_State *L)
  * print(a) -- Bitarray[0,0,1,0,1,0,0,0]
  * print(b) -- Bitarray[0,0,1,0]
  */
-_BITARRAY_API static int slice(lua_State *L)
+BITARRAY_API static int slice(lua_State *L)
 {
     size_t from, to;
     Bitarray *ba = checkbitarray_and_optrange(L, &from, &to);
@@ -275,7 +271,7 @@ _BITARRAY_API static int slice(lua_State *L)
  * local a = Bitarray.new(3):set(3, true)
  * print(a:rep(4))  -- Bitarray[0,0,1,0,0,1,0,0,1,0,0,1]
  */
-_BITARRAY_API static int rep(lua_State *L)
+BITARRAY_API static int rep(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     lua_Integer n = luaL_checkinteger(L, 2);
@@ -303,7 +299,7 @@ _BITARRAY_API static int rep(lua_State *L)
  * a:equal(b)          -- true
  * a == b:resize(1)    -- false
  */
-_BITARRAY_API static int equal(lua_State *L)
+BITARRAY_API static int equal(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     Bitarray *o = checkbitarray(L, 2);
@@ -324,7 +320,7 @@ _BITARRAY_API static int equal(lua_State *L)
  * local b = Bitarray.new(4):fill(true)
  * print(a..b)  -- Bitarray[0,1,1,1,1]
  */
-_BITARRAY_API static int concat(lua_State *L)
+BITARRAY_API static int concat(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     Bitarray *o = checkbitarray(L, 2);
@@ -347,7 +343,7 @@ _BITARRAY_API static int concat(lua_State *L)
  * local a = Bitarray.new(2):set(1, true)
  * print(~a)  -- Bitarray[0,1]
  */
-_BITARRAY_API static int bnot(lua_State *L)
+BITARRAY_API static int bnot(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
 
@@ -389,7 +385,7 @@ _BITARRAY_API static int bnot(lua_State *L)
  * local b = Bitarray.new(4):set(1, true)
  * print(a & b)  -- Bitarray[1,0,0,0]
  */
-_BITARRAY_API BITARRAY_BIT_BIOP(band, &)
+BITARRAY_API BITARRAY_BIT_BIOP(band, &)
 
 /**
  * <i>Does not mutate the array.</i> <br />
@@ -401,7 +397,7 @@ _BITARRAY_API BITARRAY_BIT_BIOP(band, &)
  * @tparam Bitarray other
  * @treturn Bitarray|nil the newly created bit array reference if successful
  */
-_BITARRAY_API BITARRAY_BIT_BIOP(bor, |)
+BITARRAY_API BITARRAY_BIT_BIOP(bor, |)
 
 /**
  * <i>Does not mutate the array.</i> <br />
@@ -413,7 +409,7 @@ _BITARRAY_API BITARRAY_BIT_BIOP(bor, |)
  * @tparam Bitarray other
  * @treturn Bitarray|nil the newly created bit array reference if successful
  */
-_BITARRAY_API BITARRAY_BIT_BIOP(bxor, ^)
+BITARRAY_API BITARRAY_BIT_BIOP(bxor, ^)
 
 #undef BITARRAY_BIT_BIOP
 
@@ -430,7 +426,7 @@ _BITARRAY_API BITARRAY_BIT_BIOP(bxor, ^)
  * print(a)      -- Bitarray[0,0,0,0,1,1,1,1]
  * print(a << 2) -- Bitarray[0,0,1,1,1,1,0,0]
  */
-_BITARRAY_API static int shl(lua_State *L)
+BITARRAY_API static int shl(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     long s = (long)luaL_checkinteger(L, 2);
@@ -456,7 +452,7 @@ _BITARRAY_API static int shl(lua_State *L)
  * @tparam integer n
  * @treturn Bitarray|nil the newly created bit array reference if successful
  */
-_BITARRAY_API static int shr(lua_State *L)
+BITARRAY_API static int shr(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     long s = (long)luaL_checkinteger(L, 2);
@@ -509,7 +505,7 @@ _BITARRAY_API static int shr(lua_State *L)
  * print(a) -- Bitarray[0,1,1,1,1,0,1,0,0,0]
  * a:at_uint8(2)   -- intepreted as 11110100, which is 244
  */
-_BITARRAY_API BITARRAY_AT_TYPE(uint8_t)
+BITARRAY_API BITARRAY_AT_TYPE(uint8_t)
 
 /** 
  * <i>Does not mutate the array.</i> <br />
@@ -519,7 +515,7 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint8_t)
  * @tparam[opt] integer i
  * @treturn integer
  */
-_BITARRAY_API BITARRAY_AT_TYPE(uint16_t)
+BITARRAY_API BITARRAY_AT_TYPE(uint16_t)
 
 /** 
  * <i>Does not mutate the array.</i> <br />
@@ -529,7 +525,7 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint16_t)
  * @tparam[opt] integer i
  * @treturn integer
  */
-_BITARRAY_API BITARRAY_AT_TYPE(uint32_t)
+BITARRAY_API BITARRAY_AT_TYPE(uint32_t)
 
 /** 
  * <i>Does not mutate the array.</i> <br />
@@ -544,7 +540,7 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint32_t)
  * local a = Bitarray.new(64):fill(true)
  * string.format('%u', a:at_uint64()) -- 18446744073709551615
  */
-_BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
+BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
 
 #undef BITARRAY_AT_TYPE
 
@@ -586,7 +582,7 @@ _BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
  * local b = Bitarray.new(16):from_uint8(255, 9)
  * print(b) -- Bitarray[0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1]
  */
-_BITARRAY_API BITARRAY_FROM_TYPE(uint8_t)
+BITARRAY_API BITARRAY_FROM_TYPE(uint8_t)
 
 /** 
  * <i>Mutates the array.</i> <br />
@@ -598,7 +594,7 @@ _BITARRAY_API BITARRAY_FROM_TYPE(uint8_t)
  * @tparam[opt] integer i
  * @treturn Bitarray the original bit array reference
  */
-_BITARRAY_API BITARRAY_FROM_TYPE(uint16_t)
+BITARRAY_API BITARRAY_FROM_TYPE(uint16_t)
 
 /** 
  * <i>Mutates the array.</i> <br />
@@ -610,7 +606,7 @@ _BITARRAY_API BITARRAY_FROM_TYPE(uint16_t)
  * @tparam[opt] integer i
  * @treturn Bitarray the original bit array reference
  */
-_BITARRAY_API BITARRAY_FROM_TYPE(uint32_t)
+BITARRAY_API BITARRAY_FROM_TYPE(uint32_t)
 
 /** 
  * <i>Mutates the array.</i> <br />
@@ -623,7 +619,7 @@ _BITARRAY_API BITARRAY_FROM_TYPE(uint32_t)
  * @tparam[opt] integer i
  * @treturn Bitarray the original bit array reference
  */
-_BITARRAY_API BITARRAY_FROM_TYPE(uint64_t)
+BITARRAY_API BITARRAY_FROM_TYPE(uint64_t)
 
 #undef BITARRAY_FROM_TYPE
 
@@ -642,7 +638,7 @@ _BITARRAY_API BITARRAY_FROM_TYPE(uint64_t)
  *  :from_bitarray(Bitarray.new(5):fill(true):set(3, false), 6)
  * print(a) -- Bitarray[0,0,0,0,0,1,1,0,1,1]
  */
-_BITARRAY_API static int from_bitarray(lua_State *L)
+BITARRAY_API static int from_bitarray(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     Bitarray *src = checkbitarray(L, 2);
@@ -669,7 +665,7 @@ _BITARRAY_API static int from_bitarray(lua_State *L)
  * print(a)
  * -- Bitarray[...]
  */
-_BITARRAY_API static int tostring(lua_State *L)
+BITARRAY_API static int tostring(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     luaL_Buffer buf;
@@ -691,7 +687,7 @@ push:
 }
 
 /* finalizer for bitarray */
-_BITARRAY_API static int gc(lua_State *L)
+BITARRAY_API static int gc(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     bitarray_invalidate(ba);
@@ -700,7 +696,7 @@ _BITARRAY_API static int gc(lua_State *L)
 
 /* actual __index, if param if number it returns result of get(), otherwise
    looks up for fields */
-_BITARRAY_API static int get(lua_State *L)
+BITARRAY_API static int get(lua_State *L)
 {
 #if LUA_VERSION_NUM >= 503
     if (lua_isinteger(L, 2))
@@ -768,7 +764,7 @@ static const struct luaL_Reg bitarraylib_m1[] =
     { NULL, NULL }
 };
 
-int luaopen_bitarray(lua_State *L)
+BITARRAY_MAIN int luaopen_bitarray(lua_State *L)
 {
     luaL_newmetatable(L, BITARRAY_MT_1);
 
