@@ -468,13 +468,18 @@ BITARRAY_API static int shr(lua_State *L)
     return 1;
 }
 
+static size_t checkopt_index(lua_State *L, Bitarray *ba, int nArg)
+{
+    lua_Integer i = luaL_optinteger(L, nArg, 1) - 1;
+    luaL_argcheck(L, 0 <= i && i < ba->size, nArg, "index out of range");
+    return (size_t)i;
+}
+
 #define BITARRAY_AT_TYPE(TYPE) \
     static int at_ ## TYPE(lua_State *L) \
     { \
         Bitarray *ba = checkbitarray(L, 1); \
-        lua_Integer i_ = luaL_optinteger(L, 2, 1) - 1; \
-        luaL_argcheck(L, 0 <= i_ && i_ < ba->size, 2, "invalid index"); \
-        size_t i = (size_t)i_; \
+        size_t i = checkopt_index(L, ba, 2); \
         size_t tgt = sizeof(TYPE) * CHAR_BIT; \
         luaL_argcheck(L, ba->size - i + 1 > tgt, 2, \
             "too few bits to construct this type"); \
@@ -549,9 +554,7 @@ BITARRAY_API BITARRAY_AT_TYPE(uint64_t)
     { \
         Bitarray *ba = checkbitarray(L, 1); \
         TYPE src = (TYPE)luaL_checkinteger(L, 2); \
-        lua_Integer i_ = luaL_optinteger(L, 3, 1) - 1; \
-        luaL_argcheck(L, 0 <= i_ && i_ < ba->size, 3, "invalid index"); \
-        size_t i = (size_t)i_; \
+        size_t i = checkopt_index(L, ba, 3); \
         size_t tgt = sizeof(TYPE) * CHAR_BIT; \
         luaL_argcheck(L, ba->size - i + 1 > tgt, 3, \
             "too few bits to contain this type"); \
@@ -642,7 +645,7 @@ BITARRAY_API static int from_bitarray(lua_State *L)
 {
     Bitarray *ba = checkbitarray(L, 1);
     Bitarray *src = checkbitarray(L, 2);
-    lua_Integer i = luaL_optinteger(L, 3, 1) - 1;
+    size_t i = checkopt_index(L, ba, 3);
     luaL_argcheck(L, ba->size - i + 1 > src->size, 3, "not enough space");
 
     bitarray_copyvalues2(src, ba, 0, src->size, i);
