@@ -122,8 +122,7 @@ static size_t bitarray_resize(Bitarray *ba, size_t nbits)
         for (size_t i = nbits; i < newwords * BITS_PER_WORD; ++i)
             bitarray_set_bit(ba, i, 0);
     } else {
-        for (size_t i = oldbits; i < oldwords * BITS_PER_WORD; ++i)
-            bitarray_set_bit(ba, i, 0);
+        /* gap between oldbits and oldwords*BITS_PER_WORD is guaranteed to be 0 */
         for (size_t i = oldwords; i < newwords; ++i)
             ba->values[i] = 0;
     }

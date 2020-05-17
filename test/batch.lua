@@ -39,6 +39,8 @@ do
 end
 
 -- fill, flip and copy
+-- note not only the below resize, `BITARRAY_WORD_ITER` have to be checked
+-- for out-of-range modification as well
 do
     local a = Bitarray.new(279)
         a:flip()
@@ -76,6 +78,11 @@ do
         for i = 1, 1024 do check(b[i]) end
         b:resize(10000)
         for i = 1025, 10000 do check(not b[i]) end
+    local c = Bitarray.new(32)
+        c:fill(true)
+        c:resize(16)
+        c:resize(32)
+        for i = 17, 32 do check(not c[i]) end
 end
 
 -- eq
@@ -173,6 +180,10 @@ do
         check(e:shiftleft(6):at_uint32(1) == 9344)
         check(e:shiftright(6):at_uint32(1) == 2)
         check(e:shiftright(-4) == e:shiftleft(4))
+    local f = Bitarray.new(15)
+        f = f:bxor(f)
+        f:resize(32)
+        for i = 16, 32 do check(not f[i]) end
 end
 
 print('all tests passed!')
