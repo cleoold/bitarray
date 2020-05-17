@@ -149,6 +149,15 @@ do
         check(b == Bitarray.new(33)..Bitarray.new(31):fill(true))
 end
 
+-- from_binarystring
+do
+    local a = Bitarray.new(1):from_binarystring('1')
+        check(a[1])
+    local b = Bitarray.new(16):from_binarystring('11001100'):from_binarystring('11111111', 9)
+        check(b:at_uint16() == 0xCCFF)
+        checkerror(function() b:from_binarystring('0x11') end)
+end
+
 -- bitwise
 do
     local a = Bitarray.new(177)

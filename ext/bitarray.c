@@ -628,9 +628,9 @@ BITARRAY_API BITARRAY_FROM_TYPE(uint64_t)
 
 /**
  * <i>Mutates the array.</i> <br />
- * Copy the content from src to the operand. The array's ith, i+1th, ... bit
- * will be the bits from src starting from 1st to the last. The array needs
- * to be big enough to hold the data.
+ * Copy the content from bitarray src to the operand. The array's ith, i+1th,
+ * ... bit will be the bits from src starting from 1st to the last. The array
+ * needs to be big enough to hold the data.
  * @function from_bitarray
  * @tparam Bitarray src
  * @tparam[opt] integer i the index in this array where the first bit gets
@@ -649,6 +649,42 @@ BITARRAY_API static int from_bitarray(lua_State *L)
     luaL_argcheck(L, ba->size - i + 1 > src->size, 3, "not enough space");
 
     bitarray_copyvalues2(src, ba, 0, src->size, i);
+    lua_pushvalue(L, 1);
+    return 1;
+}
+
+/**
+ * <i>Mutates the array.</i> <br />
+ * Copy the content from a binary string to the operand. Given the string
+ * consisting of only 0 and 1's, the array's ith, i+1th, ... bit will be
+ * the false/true values represented by chars in this string. The array
+ * needs to be big enough to hold the data.
+ * @function from_binarystring
+ * @tparam string src
+ * @tparam[opt] integer i the index in this array where the first bit gets
+ * copied from src. default 1
+ * @treturn Bitarray the original bit array reference
+ * @usage
+ * local a = Bitarray.new(12)
+ *  :from_binarystring('001100'):from_binarystring('111111', 7)
+ * print(a) -- Bitarray[0,0,1,1,0,0,1,1,1,1,1,1]
+ * -- a:from_binarystring('10x0') error! invalid string
+ */
+BITARRAY_API static int from_binarystring(lua_State *L)
+{
+    Bitarray *ba = checkbitarray(L, 1);
+    size_t slen;
+    const char *s = luaL_checklstring(L, 2, &slen);
+    size_t i = checkopt_index(L, ba, 3);
+
+    for (size_t j = 0; j < slen; ++j) {
+        if (s[j] != '1' && s[j] != '0')
+            luaL_argerror(L, 2, "invalid binary string");
+    }
+    luaL_argcheck(L, ba->size - i + 1 > slen, 3, "not enough space");
+
+    for (size_t j = 0; j < slen; ++j)
+        bitarray_set_bit(ba, i + j, s[j] == '1');
     lua_pushvalue(L, 1);
     return 1;
 }
@@ -744,6 +780,7 @@ static const struct luaL_Reg bitarraylib_m1[] =
     { "at_uint32", at_uint32_t },
     { "at_uint64", at_uint64_t },
     { "from_bitarray", from_bitarray },
+    { "from_binarystring", from_binarystring },
     { "from_uint8", from_uint8_t },
     { "from_uint16", from_uint16_t },
     { "from_uint32", from_uint32_t },
