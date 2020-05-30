@@ -118,6 +118,11 @@
  original array, inclusive.</td>
 	</tr>
 	<tr>
+	<td class="name" nowrap><a href="#Bitarray:rep">Bitarray:rep (n)</a></td>
+	<td class="summary"><i>Does not mutate the array.</i> <br />
+ Repeat the array n times and return the new array.</td>
+	</tr>
+	<tr>
 	<td class="name" nowrap><a href="#Bitarray:equal">Bitarray:equal (other)</a></td>
 	<td class="summary"><i>Does not mutate the array.</i> <br />
  Compares whether two arrays are identical (same value and length).</td>
@@ -200,7 +205,12 @@
 	<tr>
 	<td class="name" nowrap><a href="#Bitarray:from_bitarray">Bitarray:from_bitarray (src[, i])</a></td>
 	<td class="summary"><i>Mutates the array.</i> <br />
- Copy the content from src to the operand.</td>
+ Copy the content from bitarray src to the operand.</td>
+	</tr>
+	<tr>
+	<td class="name" nowrap><a href="#Bitarray:from_binarystring">Bitarray:from_binarystring (src[, i])</a></td>
+	<td class="summary"><i>Mutates the array.</i> <br />
+ Copy the content from a binary string to the operand.</td>
 	</tr>
 	<tr>
 	<td class="name" nowrap><a href="#Bitarray:tostring">Bitarray:tostring ()</a></td>
@@ -488,7 +498,7 @@
     <ul>
         <li><span class="parameter">n</span>
             <span class="types"><span class="type">integer</span></span>
-
+         >= 1
         </li>
     </ul>
 
@@ -563,6 +573,40 @@
  <span class="keyword">local</span> b = a:slice(<span class="number">1</span>, <span class="number">4</span>)
  <span class="global">print</span>(a) <span class="comment">-- Bitarray[0,0,1,0,1,0,0,0]
 </span> <span class="global">print</span>(b) -- Bitarray[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>]</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:rep"></a>
+    <strong>Bitarray:rep (n)</strong>
+    </dt>
+    <dd>
+    <i>Does not mutate the array.</i> <br />
+ Repeat the array n times and return the new array.  <br />
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">n</span>
+            <span class="types"><span class="type">integer</span></span>
+         >= 1
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a> or <span class="type">nil</span></span>
+        the newly created bit array reference if successful
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">3</span>):set(<span class="number">3</span>, <span class="keyword">true</span>)
+ <span class="global">print</span>(a:rep(<span class="number">4</span>))  -- Bitarray[<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>]</pre>
     </ul>
 
 </dd>
@@ -1148,9 +1192,9 @@
     </dt>
     <dd>
     <i>Mutates the array.</i> <br />
- Copy the content from src to the operand.  The array's ith, i+1th, ... bit
- will be the bits from src starting from 1st to the last. The array needs
- to be big enough to hold the data.
+ Copy the content from bitarray src to the operand.  The array's ith, i+1th,
+ ... bit will be the bits from src starting from 1st to the last. The array
+ needs to be big enough to hold the data.
 
 
     <h3>Parameters:</h3>
@@ -1181,6 +1225,50 @@
  <span class="keyword">local</span> a = Bitarray.new(<span class="number">10</span>)
   :from_bitarray(Bitarray.new(<span class="number">5</span>):fill(<span class="keyword">true</span>):set(<span class="number">3</span>, <span class="keyword">false</span>), <span class="number">6</span>)
  <span class="global">print</span>(a) -- Bitarray[<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">1</span>]</pre>
+    </ul>
+
+</dd>
+    <dt>
+    <a name = "Bitarray:from_binarystring"></a>
+    <strong>Bitarray:from_binarystring (src[, i])</strong>
+    </dt>
+    <dd>
+    <i>Mutates the array.</i> <br />
+ Copy the content from a binary string to the operand.  Given the string
+ consisting of only 0 and 1's, the array's ith, i+1th, ... bit will be
+ the false/true values represented by chars in this string. The array
+ needs to be big enough to hold the data.
+
+
+    <h3>Parameters:</h3>
+    <ul>
+        <li><span class="parameter">src</span>
+            <span class="types"><a class="type" href="http://www.lua.org/manual/5.1/manual.html#5.4">string</a></span>
+
+        </li>
+        <li><span class="parameter">i</span>
+            <span class="types"><span class="type">integer</span></span>
+         the index in this array where the first bit gets
+ copied from src. default 1
+        </li>
+    </ul>
+
+    <h3>Returns:</h3>
+    <ol>
+
+           <span class="types"><a class="type" href="index.html#Bitarray">Bitarray</a></span>
+        the original bit array reference
+    </ol>
+
+
+
+    <h3>Usage:</h3>
+    <ul>
+        <pre class="example">
+ <span class="keyword">local</span> a = Bitarray.new(<span class="number">12</span>)
+  :from_binarystring(<span class="string">'001100'</span>):from_binarystring(<span class="string">'111111'</span>, <span class="number">7</span>)
+ <span class="global">print</span>(a) <span class="comment">-- Bitarray[0,0,1,1,0,0,1,1,1,1,1,1]
+</span> -- a:from_binarystring(<span class="string">'10x0'</span>) error! invalid <span class="global">string</span></pre>
     </ul>
 
 </dd>

@@ -1,8 +1,8 @@
 package = "bitarray"
-version = "1.4-1"
+version = "1.5-1"
 source = {
    url = "git+https://github.com/cleoold/bitarray.git",
-   tag = "1.4"
+   tag = "1.5"
 }
 description = {
    summary = "Bit array library for lua",
@@ -25,5 +25,5 @@ build = {
          sources = "ext/bitarray.c"
       }
    },
-   copy_directories = { "doc", }
+   copy_directories = { "doc" }
 }
