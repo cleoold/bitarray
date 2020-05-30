@@ -189,8 +189,8 @@ do
         check(e:shiftleft(6):at_uint32(1) == 9344)
         check(e:shiftright(6):at_uint32(1) == 2)
         check(e:shiftright(-4) == e:shiftleft(4))
-    local f = Bitarray.new(15)
-        f = f:bxor(f)
+    local f = Bitarray.new(15):fill(true)
+        f = f:bor(f)
         f:resize(32)
         for i = 16, 32 do check(not f[i]) end
 end
