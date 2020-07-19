@@ -9,6 +9,8 @@ local function checkerror(exprf)
     if pcall(exprf) then error('test failed', 2) end
 end
 
+print(('%s\ncompiled with block size: %d'):format(Bitarray.__version, Bitarray._blocksize))
+
 -- array creation and set/get bit
 do
     local a = Bitarray.new(1)

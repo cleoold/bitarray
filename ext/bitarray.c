@@ -14,7 +14,13 @@
  * Describes the loaded bitarray library info (version and lua version)
  * @string __version
  */
-#define BITARRAY_INFO "bitarray 1.5 for " LUA_VERSION
+#define BITARRAY_INFO "bitarray 1.51 for " LUA_VERSION
+
+/**
+ * <code>sizeof(unsigned int)</code>.
+ * @number _blocksize
+ */
+#define BITARRAY_BLOCK_SIZE sizeof(WORD)
 
 #define BITARRAY_MT_1 "cleoold.lua.bitarray_mt1"
 
@@ -820,6 +826,8 @@ BITARRAY_MAIN int luaopen_bitarray(lua_State *L)
 
     lua_pushliteral(L, BITARRAY_INFO);
     lua_setfield(L, -2, "__version");
+    lua_pushinteger(L, BITARRAY_BLOCK_SIZE);
+    lua_setfield(L, -2, "_blocksize");
 
     return 1;
 }
