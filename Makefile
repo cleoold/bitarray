@@ -38,7 +38,7 @@ endif
 CFLAGS += $(CCSHARED) $(LUA_CFLAGS)
 LDFLAGS += $(LIBFLAG)
 
-SRC = ext/bitarray.c ext/bitarray_impl.h
+SRC = ext/bitarray.c ext/bitarray_impl.h ext/lualibdefs.h
 OBJ = $(OUTPUT_DIR)/bitarray.o
 
 .PHONY : all
